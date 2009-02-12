@@ -6,6 +6,9 @@ import wx
 import traceback
 import Image
 
+import  wx.lib.newevent
+
+
 import Break_Captcha_util
 
 
@@ -28,15 +31,6 @@ class MyFrame(wx.Frame):
         self.text_score.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.BOLD))
         self.score = wx.StaticText(self, -1)
         self.score.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.NORMAL))
-
-##        self.main_sizer = wx.GridBagSizer()
-##        self.main_sizer.Add(self.image_input_window, (1,1), span = (2,1), flag=wx.ALIGN_CENTER | wx.ALL, border=20)
-##        self.main_sizer.Add(self.image_input_window, (2,1), span = (2,1), flag=wx.ALIGN_CENTER | wx.ALL, border=20)
-##        self.main_sizer.Add(self.text_resultat, (2,2), flag=wx.ALIGN_CENTER | wx.ALL, border=5)
-##        self.main_sizer.Add(self.resultat, (2,3), flag=wx.ALIGN_CENTER | wx.ALL, border=0)
-##        self.main_sizer.Add(self.text_score, (3,2), flag=wx.ALIGN_CENTER | wx.ALL, border=5)
-##        self.main_sizer.Add(self.score, (3,3), flag=wx.ALIGN_CENTER | wx.ALL, border=0)
-        
         
         self.main_sizer = wx.GridBagSizer()
         self.main_sizer.Add(self.image_input_window, (1,1), span = (2,1), flag=wx.ALIGN_CENTER | wx.ALL, border=20)
@@ -86,7 +80,7 @@ class MyFrame(wx.Frame):
         self.text_width = wx.StaticText(self, -1, "Largeur de fenetre")
         self.text_width.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.BOLD))
         self.width_picker = wx.SpinCtrl(self, size = (50, -1), max=38)
-        self.width_picker.SetValue(30)
+        self.width_picker.SetValue(20)
         self.sizer_width.Add(self.text_width, flag = wx.ALIGN_CENTER | wx.RIGHT, border = 12)
         self.sizer_width.Add(self.width_picker, flag = wx.ALIGN_CENTER)
         
@@ -114,7 +108,72 @@ class MyFrame(wx.Frame):
         self.actif = False
         
         
-        
+        ###############################################################################
+        ############################# CREATION EVENEMENTS #############################
+        ###############################################################################
+        self.SomeNewSetPathLabelEvent, self.EVT_SET_PATH_EVENT = wx.lib.newevent.NewEvent()
+        self.Bind(self.EVT_SET_PATH_EVENT, self.OnSetPathLabel)
+
+        self.SomeNewSetCaptchaImageEvent, self.EVT_SET_CAPTCHA_IMAGE_EVENT = wx.lib.newevent.NewEvent()
+        self.Bind(self.EVT_SET_CAPTCHA_IMAGE_EVENT, self.OnsetCaptchaImage)
+
+        self.SomeNewSetGraphImageEvent, self.EVT_SET_GRAPH_IMAGE_EVENT = wx.lib.newevent.NewEvent()
+        self.Bind(self.EVT_SET_GRAPH_IMAGE_EVENT, self.OnSetGraphImage)
+
+        self.SomeNewSetResultEvent, self.EVT_SET_RESULT_EVENT = wx.lib.newevent.NewEvent()
+        self.Bind(self.EVT_SET_RESULT_EVENT, self.OnSetResult)
+        ###############################################################################
+        ###############################################################################
+
+
+
+###############################################################################
+############################# COMPATIBILITE LINUX #############################
+###############################################################################
+    def setResult(self, pil_image, resultat, score_in):
+        #create the event
+        evt = self.SomeNewSetResultEvent(image=self.PIL_to_WX(pil_image).ConvertToBitmap(), result = resultat, score = score_in)
+        #post the event
+        wx.PostEvent(self, evt)
+    def OnSetResult(self, evt):
+        self.image_input_window.SetBitmap(evt.image)
+        self.resultat.SetLabel(str(evt.result))
+        self.score.SetLabel(str(evt.score))
+ ###############################################################################
+    def SetGraphImage(self, image):
+        imag1 = image.Copy()
+        #create the event
+        evt = self.SomeNewSetGraphImageEvent(image=imag1.Rescale(self.zoom*127, self.zoom*31).ConvertToBitmap())
+        #post the event
+        wx.PostEvent(self, evt)
+    def OnSetGraphImage(self, evt):
+        self.image_graph_window_orig.SetBitmap(evt.image)
+        self.image_graph_window_orig.Update()
+        self.Update()
+        self.Fit()
+ ###############################################################################
+    def setCaptchaImage(self, pil_image):
+        #create the event
+        evt = self.SomeNewSetCaptchaImageEvent(image=self.PIL_to_WX(pil_image).ConvertToBitmap())
+        #post the event
+        wx.PostEvent(self, evt)
+    def OnsetCaptchaImage(self, evt):
+        self.image_input_window_orig.SetBitmap(evt.image)
+  ###############################################################################
+    def SetPathLabel(self, filename):
+        #create the event
+        evt = self.SomeNewSetPathLabelEvent(name=filename)
+        #post the event
+        wx.PostEvent(self, evt)
+    def OnSetPathLabel(self, evt):
+        self.path_model.SetLabel(evt.name)
+###############################################################################
+###############################################################################
+
+
+###############################################################################
+########################### EVEMENEMENTS GRAPHIQUES ###########################
+###############################################################################
     def OnLaunch(self, evt):
         if not self.actif:
             if not self.captcha_selected:
@@ -163,29 +222,16 @@ class MyFrame(wx.Frame):
             self.setCaptchaImage(self.beau_captcha)
             self.captcha_selected = True
         self.Update()
-    
-        
-        
-    def setResult(self, pil_image, result, score):
-        self.image_input_window.SetBitmap(self.PIL_to_WX(pil_image).ConvertToBitmap())
-        self.resultat.SetLabel(str(result))
-        self.score.SetLabel(str(score))
- 
-    def setCaptchaImage(self, pil_image):
-        self.image_input_window_orig.SetBitmap(self.PIL_to_WX(pil_image).ConvertToBitmap())
- 
+###############################################################################
+###############################################################################
+
+
  
     def PIL_to_WX(self, pil):
         image = wx.EmptyImage(pil.size[0], pil.size[1])
         data = pil.tostring()
         image.SetData(data)
         return image
- 
- 
-    def SetGraphImage(self, image):
-        imag1 = image.Copy()
-        self.image_graph_window_orig.SetBitmap(imag1.Rescale(self.zoom*127, self.zoom*31).ConvertToBitmap())
-        self.image_graph_window_orig.Update()
  
  
  

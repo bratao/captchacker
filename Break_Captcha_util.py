@@ -22,11 +22,11 @@ def load_model(chemin, parent=None, fichier = ""):
     else:
         print "Loading model..."
         if parent:
-            parent.path_model.SetLabel("Loading model...")
+            parent.SetPathLabel("Loading model...")
         model = svm_model(chemin)
         print "Model successfully loaded."
         if parent:
-            parent.path_model.SetLabel(fichier)
+            parent.SetPathLabel(fichier)
             parent.model = model
             parent.model_selected = True
     return model
@@ -98,13 +98,11 @@ def break_captcha(model, captcha, size=38, parent = None, image=None):
         if parent:
             w, h = preprocessed_captcha_part.size
             preprocessed_captcha_part = preprocessed_captcha_part.point(lambda e : e*255).convert('RGB').resize((parent.zoom*w, parent.zoom*h))
-            parent.setResult(preprocessed_captcha_part, prediction, max_score)
+            parent.setResult(preprocessed_captcha_part, prediction, int(max_score*10000000)/10000000.)
             
             parent.graph_image.SetRGB(starting_pos + 38/2, 31 - int(max_score*h), 255, 0, 0)
             parent.SetGraphImage(image)
             
-            parent.Update()
-            parent.Fit()
             time.sleep(0.5)
     if parent:
         parent.launchButton.SetLabel("Lancer le calcul")
