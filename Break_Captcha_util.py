@@ -2,6 +2,7 @@
 from svm import *
 import os, sys
 import Image, time
+import wx
 
 import psyco
 psyco.full()
@@ -9,7 +10,7 @@ psyco.full()
 from Preprocess import preprocess_captcha
 from Preprocess import load_image
 
-#AUTRES PARAMETRES A LA FIN DU FICHIER !
+TEST = 0
 VERBOSE = 0
 STARTING_POSITION_STEP = 1
 
@@ -62,8 +63,8 @@ def predict(model, im, liste_probas):
     
     
     
-def break_captcha(model, captcha, size=38, parent = None):
-
+def break_captcha(model, captcha, size=38, parent = None, image=None):
+    
     if not parent:
         print """
         ##############################################################################
@@ -72,6 +73,9 @@ def break_captcha(model, captcha, size=38, parent = None):
         """
 
     liste_probas = []
+    
+    if parent:
+        w,h = image.GetSize()
     
     for starting_pos in range(0, 127-31,STARTING_POSITION_STEP):
         if parent:
@@ -86,15 +90,24 @@ def break_captcha(model, captcha, size=38, parent = None):
             for i in range(38 - (38-size)/2, 38):
                 preprocessed_captcha_part.putpixel((i,j), 1)
         
-        prediction, max_score = predict(model, preprocessed_captcha_part, liste_probas)
+        if not TEST:
+            prediction, max_score = predict(model, preprocessed_captcha_part, liste_probas)
+        else:
+            prediction, max_score = "M", 0.21313
 
         if parent:
             w, h = preprocessed_captcha_part.size
             preprocessed_captcha_part = preprocessed_captcha_part.point(lambda e : e*255).convert('RGB').resize((parent.zoom*w, parent.zoom*h))
             parent.setResult(preprocessed_captcha_part, prediction, max_score)
+            
+            parent.graph_image.SetRGB(starting_pos + 38/2, 31 - int(max_score*h), 255, 0, 0)
+            parent.SetGraphImage(image)
+            
             parent.Update()
             parent.Fit()
             time.sleep(0.5)
+    if parent:
+        parent.launchButton.SetLabel("Lancer le calcul")
 
 
 
@@ -103,7 +116,8 @@ if __name__ == "__main__":
     CAPTCHA_FILE = os.path.join("Captchas", 'Image011.jpg')
     LENGTH_CAPTCHA_PART = 31
     
-    model = load_model(MODEL_FILE)
+    if not TEST:
+        model = load_model(MODEL_FILE)
     
     captcha, beau_captcha = preprocess_captcha_part(CAPTCHA_FILE)
     break_captcha(model, captcha, size=38)
