@@ -23,7 +23,7 @@ class MyFrame(wx.Frame):
         self.image_input_window = wx.StaticBitmap(self, -1, size = taille, bitmap = wx.EmptyBitmap(*taille))
         self.image_input_window.SetMinSize(taille)
         
-        self.text_resultat = wx.StaticText(self, -1, "Résultat :")
+        self.text_resultat = wx.StaticText(self, -1, "Resultat :")
         self.text_resultat.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.BOLD))
         self.resultat = wx.StaticText(self, -1)
         self.resultat.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.NORMAL))
@@ -58,7 +58,7 @@ class MyFrame(wx.Frame):
         ## PARTIE DE GAUCHE
         self.sizer_model = wx.FlexGridSizer(rows = 1)
         self.open_image = wx.Bitmap("open.bmp", wx.BITMAP_TYPE_BMP)
-        self.text_model = wx.StaticText(self, -1, "Ouvrir le modèle")
+        self.text_model = wx.StaticText(self, -1, "Ouvrir le modele")
         self.text_model.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.BOLD))
         self.path_model = wx.TextCtrl(self, -1, size = (100, -1))
         self.path_model.SetEditable(False)
@@ -69,7 +69,7 @@ class MyFrame(wx.Frame):
         self.sizer_model.Add(self.bouton_model, flag = wx.ALIGN_CENTER)
         
         self.sizer_captcha = wx.FlexGridSizer(rows = 1)
-        self.text_captcha = wx.StaticText(self, -1, "Sélectionner le captcha")
+        self.text_captcha = wx.StaticText(self, -1, "Selectionner le captcha")
         self.text_captcha.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.BOLD))
         self.bouton_captcha = wx.BitmapButton(self, -1, self.open_image)
         self.bouton_captcha.Bind(wx.EVT_BUTTON, self.OnSelectCaptcha)
@@ -177,10 +177,10 @@ class MyFrame(wx.Frame):
     def OnLaunch(self, evt):
         if not self.actif:
             if not self.captcha_selected:
-                wx.MessageBox("Sélectionner le Captcha !", "Donnée manquante")
+                wx.MessageBox("Selectionner le Captcha !", "Donnee manquante")
                 return
             if not self.model_selected:
-                wx.MessageBox("Sélectionner le modèle SVM !", "Donnée manquante")
+                wx.MessageBox("Selectionner le modele SVM !", "Donnee manquante")
                 #return
             
             self.actif = not self.actif
@@ -194,7 +194,7 @@ class MyFrame(wx.Frame):
         
         
     def OnSelectModel(self, evt):
-        dlg = wx.FileDialog(self, "Choisissez le modèle à ouvrir", os.getcwd(), "model.svm",
+        dlg = wx.FileDialog(self, "Selectionnez le modele", os.getcwd(), "model.svm",
                             wildcard = "Model files (*.svm)|*.svm",
                             style = wx.OPEN)
         retour = dlg.ShowModal()
@@ -209,7 +209,7 @@ class MyFrame(wx.Frame):
         
         
     def OnSelectCaptcha(self, evt):
-        dlg = wx.FileDialog(self, "Choisissez l'image à ouvrir", os.path.join(os.getcwd(), "Captchas"), "Image011.jpg",
+        dlg = wx.FileDialog(self, "Selectionnez l'image", os.path.join(os.getcwd(), "Captchas"), "Image011.jpg",
                             wildcard = "Image files (*.jpg;)|*.jpg",
                             style = wx.OPEN)
         retour = dlg.ShowModal()
