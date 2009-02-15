@@ -122,6 +122,9 @@ class MyFrame(wx.Frame):
 
         self.SomeNewSetResultEvent, self.EVT_SET_RESULT_EVENT = wx.lib.newevent.NewEvent()
         self.Bind(self.EVT_SET_RESULT_EVENT, self.OnSetResult)
+        
+        self.SomeNewSetRGBEvent, self.EVT_SET_RGB_EVENT = wx.lib.newevent.NewEvent()
+        self.Bind(self.EVT_SET_RGB_EVENT, self.OnSetRGB)
         ###############################################################################
         ###############################################################################
 
@@ -130,6 +133,14 @@ class MyFrame(wx.Frame):
 ###############################################################################
 ############################# COMPATIBILITE LINUX #############################
 ###############################################################################
+    def SetRGB(self, pos1, pos2):
+        #create the event
+        evt = self.SomeNewSetRGBEvent(pos1 = pos1, pos2 = pos2)
+        #post the event
+        wx.PostEvent(self, evt)
+    def OnSetRGB(self, evt):
+        self.graph_image.SetRGB(evt.pos1, evt.pos2, 255, 0, 0)
+ ###############################################################################
     def setResult(self, pil_image, resultat, score_in):
         #create the event
         evt = self.SomeNewSetResultEvent(image=self.PIL_to_WX(pil_image).ConvertToBitmap(), result = resultat, score = score_in)
@@ -148,9 +159,9 @@ class MyFrame(wx.Frame):
         wx.PostEvent(self, evt)
     def OnSetGraphImage(self, evt):
         self.image_graph_window_orig.SetBitmap(evt.image)
-        self.image_graph_window_orig.Update()
-        self.Update()
-        self.Fit()
+        #self.image_graph_window_orig.Update()
+        #self.Update()
+        #self.Fit()
  ###############################################################################
     def setCaptchaImage(self, pil_image):
         #create the event
