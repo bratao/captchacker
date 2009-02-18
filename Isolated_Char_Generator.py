@@ -12,20 +12,25 @@ import Image
 
 DEFAULT_SIZE = (38, 31)
 SEUIL = 200
-FONT_DIRECTORY = "/media/sda4/ecp/Mod1/Pattern Recognition/Project/Code/pycaptcha/Captcha/data/fonts/"
+FONT_DIRECTORY = ""
 GENERATE_TRAINING_SET = True
 GENERATE_VALIDATION_SET = True
+ERASE = True
+FONTS = ["califfb/califb.ttf", "vera/vera.ttf"]
+#FONTS = ["califfb/califb.ttf"]
 
 
 ### CAPTCHA GENERATOR ###
 
 class MyCaptcha(ImageCaptcha):
 
-    def __init__(self, scale = 35, distortion = (5,5), solution = "9C8G5D"):
+    def __init__(self, scale = 35, distortion = (5,5), solution = "9C8G5D", font = "califfb/califb.ttf", alignx = 0.5, aligny = 0.5):
         self.distortion = distortion
         self.scale = scale
-        self.fontFactory = Text.FontFactory(scale, FONT_DIRECTORY+"califfb/califb.ttf")
+        self.fontFactory = Text.FontFactory(scale, FONT_DIRECTORY+font)
         self.solution = solution
+        self.alignx = alignx
+        self.aligny = aligny
         
         font = ImageFont.truetype(*self.fontFactory.pick())
         #textSize = font.getsize(self.solution)
@@ -40,7 +45,7 @@ class MyCaptcha(ImageCaptcha):
 
         textLayer = Text.TextLayer(self.solution,
                                    fontFactory = self.fontFactory,
-                                   alignment = (0.5,0.5))
+                                   alignment = (self.alignx, self.aligny))
 
         return [
             Backgrounds.SolidColor(),
@@ -51,103 +56,120 @@ class MyCaptcha(ImageCaptcha):
 
 ### SET GENERATOR ###
 
-def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER, DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_list):
+def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
+                 DISTORTION_W_MIN,DISTORTION_W_MAX, DISTORTION_H_MIN,DISTORTION_H_MAX,
+                 SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, fonts, ALIGN_RANGEX, ALIGN_RANGEY):
     if not os.path.isdir(DESTINATION_FOLDER):
         os.mkdir(DESTINATION_FOLDER)
     else:
-        for subdir in os.listdir(DESTINATION_FOLDER):
-            for file in os.listdir(os.path.join(DESTINATION_FOLDER, subdir)):
-                os.remove(os.path.join(DESTINATION_FOLDER, subdir, file))
-            os.rmdir(os.path.join(DESTINATION_FOLDER, subdir))
-        
-    for elem in elem_list:
+        if ERASE:
+            for subdir in os.listdir(DESTINATION_FOLDER):
+                for file in os.listdir(os.path.join(DESTINATION_FOLDER, subdir)):
+                    os.remove(os.path.join(DESTINATION_FOLDER, subdir, file))
+                os.rmdir(os.path.join(DESTINATION_FOLDER, subdir))
+    
+    for elem in elem_to_gen:
         if not os.path.isdir(os.path.join(DESTINATION_FOLDER,elem)):
             os.mkdir(os.path.join(DESTINATION_FOLDER,elem))
-        for scale in range(SCALE_MIN, SCALE_MAX, STEP):
-            for distort_w in range(DISTORTION_W_MIN,DISTORTION_W_MAX, STEP):
-                for distort_h in range(DISTORTION_H_MIN,DISTORTION_H_MAX, STEP):
-                    captcha=MyCaptcha(scale, distortion = (distort_w,distort_h), solution = elem)
-                    image=captcha.render().convert('L')
-                    
-                    for i in xrange(DEFAULT_SIZE[0]):
-                        for j in xrange(DEFAULT_SIZE[1]):
-                            val = image.getpixel((i,j))
-                            if val < SEUIL:
-                                val = 0
-                            else:
-                                val = 255
-                            image.putpixel((i,j), val)
-            
-                    file = os.path.join(DESTINATION_FOLDER,elem,elem+'_'+str(scale)+'_'+str(distort_w)+'_'+str(distort_h)+'.bmp')
-                    image.save(file)
-        print elem + " files generated."
+        
+        for font in fonts:
+            font_name = font.split('/')[1].split('.')[0]
+            for scale in range(SCALE_MIN, SCALE_MAX, STEP):
+                for distort_w in range(DISTORTION_W_MIN,DISTORTION_W_MAX, STEP):
+                    for distort_h in range(DISTORTION_H_MIN,DISTORTION_H_MAX, STEP):
+                        for alignx in ALIGN_RANGEX:
+                            for aligny in ALIGN_RANGEY:
+                                captcha=MyCaptcha(scale, distortion = (distort_w,distort_h), solution = elem, font=font, alignx=alignx, aligny=aligny)
+                                image=captcha.render().convert('L')
+                                
+                                for i in xrange(DEFAULT_SIZE[0]):
+                                    for j in xrange(DEFAULT_SIZE[1]):
+                                        val = image.getpixel((i,j))
+                                        if val < SEUIL:
+                                            val = 0
+                                        else:
+                                            val = 255
+                                        image.putpixel((i,j), val)
+                        
+                                file = os.path.join(DESTINATION_FOLDER,elem,elem+'_'+font_name+'_'+str(scale)+'_'+str(distort_w)+'_'+str(distort_h)+'_'+str(alignx)+'_'+str(aligny)+'.bmp')
+                                image.save(file)
+                                print file
+        print elem + " files generated.\n"
 
 
 ### ELEMENT LIST GENERATOR ###
 
 def Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS):
-        elem_list = []
+        elem_to_gen = []
         
         if GENERATE_CAPITAL_LETTERS:
             for i in range(65,91):
-                elem_list.append(chr(i))
+                elem_to_gen.append(chr(i))
             
         if GENERATE_DIGITS:
             for i in range(48,58):
-                elem_list.append(chr(i))
+                elem_to_gen.append(chr(i))
             
-        return elem_list
+        return elem_to_gen
 
 
 if GENERATE_TRAINING_SET:
     print """
     ##############################################################################
-    ##########################   TRAINING    SET   #################################
+    #########################   TRAINING    SET   ################################
     ##############################################################################
     """
     
     #GENERATE_CAPITAL_LETTERS = True
     #GENERATE_DIGITS = True
-    #elem_list = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
+    #elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
     
-    elem_list='3de2mtfr'
+    elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
+    elem_to_gen=['A', 'B', 'D', 'E', 'M', 'T', '2', '3']
     
     DESTINATION_FOLDER = 'DBTraining'
     CLEAN_DESTINATION_FOLDER = True
     DISTORTION_W_MIN = 0
-    DISTORTION_W_MAX = 10
+    DISTORTION_W_MAX = 7
     DISTORTION_H_MIN = 0
-    DISTORTION_H_MAX = 10
+    DISTORTION_H_MAX = 7
     SCALE_MIN = 25
     SCALE_MAX = 31
     STEP = 1
-    Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_list)
+    ALIGN_RANGEY = [0.1, 0.5, 0.9]
+    ALIGN_RANGEX = [0.5]
+    Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,
+                 DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY)
 
 
 if GENERATE_VALIDATION_SET:
     print """
     ##############################################################################
-    ###########################      TEST   SET      ################################
+    ###########################   TEST   SET      ################################
     ##############################################################################
     """
     
     #GENERATE_CAPITAL_LETTERS = True
     #GENERATE_DIGITS = True
-    #elem_list = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
+    #elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
     
-    elem_list='3de2mt'
+    elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
+    elem_to_gen = ['A', 'B', 'D', 'E', 'M', 'T', '2', '3']
     
     DESTINATION_FOLDER = 'DBTest'
     CLEAN_DESTINATION_FOLDER = True
     DISTORTION_W_MIN = 0
-    DISTORTION_W_MAX = 6
+    DISTORTION_W_MAX = 7
     DISTORTION_H_MIN = 0
-    DISTORTION_H_MAX = 10
+    DISTORTION_H_MAX = 7
     SCALE_MIN = 25
     SCALE_MAX = 30
     STEP = 2
+    ALIGN_RANGEY = [0.1, 0.5, 0.9]
+    ALIGN_RANGEX = [0.5]
     
-    Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_list)
+    Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,
+                 DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY)
 
 
 
