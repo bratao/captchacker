@@ -20,10 +20,7 @@ sys.excepthook=Myexcepthook
 cj = cookielib.LWPCookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 opener.addheaders = [('User-agent', 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'), ('Connection' , 'Keep-Alive')]
-urllib2.install_opener(opener)
-
-PASSWORD = "124154215"
-LOGIN = "rpaucher@hotmail.fr"
+urllib2.install_opener(opener)
 
 def html(s):
     f=open("a.html","w")
@@ -56,7 +53,7 @@ LIEN_IMAGES = "https://login.live.com/pp600/hip.srf?int=login"
 
 def save_image(i):
     a, b, req1 = request(LIEN_IMAGES, param=1)
-    write_file("Hotmail/Image%03d.jpg"%i, a)
+    write_file('Hotmail/Rough Catpchas/Image%03d.jpg'%i, a)
     print i
 
 

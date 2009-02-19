@@ -47,15 +47,16 @@ def write_file(file, s):
 
 
 
-LIEN_IMAGES = "http://checkcode.taobao.com/auction/checkcode?sessionID=60b6ffe68495e74ad6dcb6fa1c91626a"
+LIEN_IMAGES = "http://www.egoshare.com/captcha.php"
 
 
 
 
 def save_image(i):
     a, b, req1 = request(LIEN_IMAGES, param=1)
-    write_file("Taobao/Image%03d.jpg"%i, a)
+    write_file("Egoshare/Rough Captchas/Image%03d.jpg"%i, a)
     print i
+
 
 
 for i in range(1000):

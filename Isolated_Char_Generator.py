@@ -10,16 +10,6 @@ import ImageFont
 
 import Image
 
-DEFAULT_SIZE = (38, 31)
-SEUIL = 200
-FONT_DIRECTORY = ""
-GENERATE_TRAINING_SET = True
-GENERATE_VALIDATION_SET = True
-ERASE = True
-FONTS = ["califfb/califb.ttf", "vera/vera.ttf"]
-#FONTS = ["califfb/califb.ttf"]
-
-
 ### CAPTCHA GENERATOR ###
 
 class MyCaptcha(ImageCaptcha):
@@ -27,7 +17,7 @@ class MyCaptcha(ImageCaptcha):
     def __init__(self, scale = 35, distortion = (5,5), solution = "9C8G5D", font = "califfb/califb.ttf", alignx = 0.5, aligny = 0.5):
         self.distortion = distortion
         self.scale = scale
-        self.fontFactory = Text.FontFactory(scale, FONT_DIRECTORY+font)
+        self.fontFactory = Text.FontFactory(scale, font)
         self.solution = solution
         self.alignx = alignx
         self.aligny = aligny
@@ -62,11 +52,12 @@ def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
     if not os.path.isdir(DESTINATION_FOLDER):
         os.mkdir(DESTINATION_FOLDER)
     else:
-        if ERASE:
+        if CLEAN_DESTINATION_FOLDER:
             for subdir in os.listdir(DESTINATION_FOLDER):
-                for file in os.listdir(os.path.join(DESTINATION_FOLDER, subdir)):
-                    os.remove(os.path.join(DESTINATION_FOLDER, subdir, file))
-                os.rmdir(os.path.join(DESTINATION_FOLDER, subdir))
+                if subdir[0]!=".": # to prevent removal of .svn folders !
+                    for file in os.listdir(os.path.join(DESTINATION_FOLDER, subdir)):
+                        os.remove(os.path.join(DESTINATION_FOLDER, subdir, file))
+                    os.rmdir(os.path.join(DESTINATION_FOLDER, subdir))
     
     for elem in elem_to_gen:
         if not os.path.isdir(os.path.join(DESTINATION_FOLDER,elem)):
@@ -111,71 +102,6 @@ def Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS):
                 elem_to_gen.append(chr(i))
             
         return elem_to_gen
-
-
-if GENERATE_TRAINING_SET:
-    print """
-    ##############################################################################
-    #########################   TRAINING    SET   ################################
-    ##############################################################################
-    """
-    
-    #GENERATE_CAPITAL_LETTERS = True
-    #GENERATE_DIGITS = True
-    #elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
-    
-    elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
-    elem_to_gen=['A', 'B', 'D', 'E', 'M', 'T', '2', '3']
-    
-    DESTINATION_FOLDER = 'DBTraining'
-    CLEAN_DESTINATION_FOLDER = True
-    DISTORTION_W_MIN = 0
-    DISTORTION_W_MAX = 7
-    DISTORTION_H_MIN = 0
-    DISTORTION_H_MAX = 7
-    SCALE_MIN = 25
-    SCALE_MAX = 31
-    STEP = 1
-    ALIGN_RANGEY = [0.1, 0.5, 0.9]
-    ALIGN_RANGEX = [0.5]
-    Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,
-                 DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY)
-
-
-if GENERATE_VALIDATION_SET:
-    print """
-    ##############################################################################
-    ###########################   TEST   SET      ################################
-    ##############################################################################
-    """
-    
-    #GENERATE_CAPITAL_LETTERS = True
-    #GENERATE_DIGITS = True
-    #elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
-    
-    elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
-    elem_to_gen = ['A', 'B', 'D', 'E', 'M', 'T', '2', '3']
-    
-    DESTINATION_FOLDER = 'DBTest'
-    CLEAN_DESTINATION_FOLDER = True
-    DISTORTION_W_MIN = 0
-    DISTORTION_W_MAX = 7
-    DISTORTION_H_MIN = 0
-    DISTORTION_H_MAX = 7
-    SCALE_MIN = 25
-    SCALE_MAX = 30
-    STEP = 2
-    ALIGN_RANGEY = [0.1, 0.5, 0.9]
-    ALIGN_RANGEX = [0.5]
-    
-    Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,
-                 DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY)
-
-
-
-
-
-
 
 
 

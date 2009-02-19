@@ -205,7 +205,7 @@ class MyFrame(wx.Frame):
         
         
     def OnSelectModel(self, evt):
-        dlg = wx.FileDialog(self, "Selectionnez le modele", os.getcwd(), "model.svm",
+        dlg = wx.FileDialog(self, "Selectionnez le modele", os.path.join(os.getcwd(),MODEL_FOLDER), DEFAULT_MODEL_FILE,
                             wildcard = "Model files (*.svm)|*.svm",
                             style = wx.OPEN)
         retour = dlg.ShowModal()
@@ -220,7 +220,7 @@ class MyFrame(wx.Frame):
         
         
     def OnSelectCaptcha(self, evt):
-        dlg = wx.FileDialog(self, "Selectionnez l'image", os.path.join(os.getcwd(), "Captchas"), "Image011.jpg",
+        dlg = wx.FileDialog(self, "Selectionnez l'image", os.path.join(os.getcwd(), CAPTCHA_FOLDER), DEFAULT_CAPTCHA_FILE,
                             wildcard = "Image files (*.jpg;)|*.jpg",
                             style = wx.OPEN)
         retour = dlg.ShowModal()
@@ -255,7 +255,6 @@ class MyApp(wx.App):
         return True
 
 
-
 app = MyApp(False)
 
 #TRACEBACK
@@ -271,7 +270,7 @@ sys.excepthook=Myexcepthook
 
 
 #thread.start_new_thread(Break_Captcha_util.break_captcha, (app.MyFrame,))
-
 app.MainLoop()
+
 
 

@@ -6,15 +6,6 @@ import Image
 import psyco
 psyco.full()
 
-
-
-TRAINING_FOLDER = 'DBTraining'
-TEST_FOLDER = 'DBTest'
-VERBOSE = 0
-#MODEL_FILE = ""
-MODEL_FILE = "model.svm"
-GENERATE_ANYWAY = 1
-
 if not os.path.isfile(MODEL_FILE) or GENERATE_ANYWAY:
     #Si le modèle n'existe pas ou que l'on veut spécifie GENERATE_ANYWAY=True, on le génère. Sinon, on le charge.
     
@@ -112,6 +103,5 @@ for subdir in os.listdir(TEST_FOLDER):
     analyze_folder(os.path.join(TEST_FOLDER, subdir))
 
 
-raw_input()
 
 

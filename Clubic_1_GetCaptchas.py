@@ -3,6 +3,7 @@ import urllib2
 import os
 import cookielib
 import time
+import re
 
 #TRACEBACK
 import traceback
@@ -29,36 +30,39 @@ def html(s):
     f.close()
     os.startfile("a.html")
 
-def request(URL, data=None, headers={}, param=0):
+def request(URL, data=None, headers={}):
     req = urllib2.Request(URL, data)
     for key, content in headers.items():
         req.add_header(key, content)
     handle = urllib2.urlopen(req)
     data=handle.read()
-    if not param:
-        return data, handle
-    else:
-        return data, handle, req
+    return data
+
 
 def write_file(file, s):
     f=open(file, 'wb')
     f.write(s)
     f.close()
+
 
-
-
-LIEN_IMAGES = "http://www.egoshare.com/captcha.php"
-
-
+LIEN_IMAGES = "http://www.clubic.com/api/creer_un_compte.php"
 
 
 def save_image(i):
-    a, b, req1 = request(LIEN_IMAGES, param=1)
-    write_file("Egoshare/Image%03d.jpg"%i, a)
-    print i
+    data = request(LIEN_IMAGES)
+    captcha_urls = re.findall('(http://www.clubic.com/divers/image-code.php\?refresh=([^"]*))"', data)
+    
+    if not captcha_urls:
+        print "No captcha link..."
+        return
+    
+    data = request(captcha_urls[0][0])
+    write_file("Clubic/Rough Captchas/%s.png"%captcha_urls[0][1], data)
+    print i, captcha_urls[0][1]
 
 
-
-for i in range(1000):
+for i in range(100):
     save_image(i)
+
+raw_input()
 
