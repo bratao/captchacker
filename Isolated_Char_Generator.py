@@ -14,7 +14,9 @@ import Image
 
 class MyCaptcha(ImageCaptcha):
 
-    def __init__(self, scale = 35, distortion = (5,5), solution = "9C8G5D", font = "califfb/califb.ttf", alignx = 0.5, aligny = 0.5):
+    def __init__(self, scale = 35, distortion = (5,5), solution = "9C8G5D",
+                 font = "califfb/califb.ttf", alignx = 0.5, aligny = 0.5,
+                 size = (38, 31)):
         self.distortion = distortion
         self.scale = scale
         self.fontFactory = Text.FontFactory(scale, font)
@@ -26,7 +28,7 @@ class MyCaptcha(ImageCaptcha):
         #textSize = font.getsize(self.solution)
         #print textSize
         #self.defaultSize = (38, self.distortion[0]+10+self.scale)
-        self.defaultSize = DEFAULT_SIZE
+        self.defaultSize = size
         ImageCaptcha.__init__(self)
         
 
@@ -48,8 +50,8 @@ class MyCaptcha(ImageCaptcha):
 
 def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
                  DISTORTION_W_MIN,DISTORTION_W_MAX, DISTORTION_H_MIN,DISTORTION_H_MAX,
-                 SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, fonts, ALIGN_RANGEX, ALIGN_RANGEY):
-    if not os.path.isdir(DESTINATION_FOLDER):
+                 SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, fonts, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE, SEUIL):
+    if not os.path.isdir(DESTINATION_FOLDER, ):
         os.mkdir(DESTINATION_FOLDER)
     else:
         if CLEAN_DESTINATION_FOLDER:
@@ -64,13 +66,13 @@ def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
             os.mkdir(os.path.join(DESTINATION_FOLDER,elem))
         
         for font in fonts:
-            font_name = font.split('/')[1].split('.')[0]
+            font_name = font.split('/')[-1].split('.')[0]
             for scale in range(SCALE_MIN, SCALE_MAX, STEP):
                 for distort_w in range(DISTORTION_W_MIN,DISTORTION_W_MAX, STEP):
                     for distort_h in range(DISTORTION_H_MIN,DISTORTION_H_MAX, STEP):
                         for alignx in ALIGN_RANGEX:
                             for aligny in ALIGN_RANGEY:
-                                captcha=MyCaptcha(scale, distortion = (distort_w,distort_h), solution = elem, font=font, alignx=alignx, aligny=aligny)
+                                captcha=MyCaptcha(scale, distortion = (distort_w,distort_h), solution = elem, font=font, alignx=alignx, aligny=aligny, size = DEFAULT_SIZE)
                                 image=captcha.render().convert('L')
                                 
                                 for i in xrange(DEFAULT_SIZE[0]):

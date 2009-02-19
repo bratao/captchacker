@@ -1,26 +1,37 @@
 #include "cv.h"
 #include "cxcore.h"
 #include "highgui.h"
-#include "iostream"
-#include <string.h>
+#include <iostream>
+#include <string>
+
+#if defined (WIN32)
+#pragma comment(lib,"cv")
+#pragma comment(lib,"cvaux")
+#pragma comment(lib,"cxcore")
+#pragma comment(lib,"highgui")
+#pragma comment(lib,"cvcam")
+#endif
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    /* if(argc<2){
-        printf("Usage: main <image-file-name>\n\7");
-        exit(0);
-    }*/
+	string filenameIN;
+	if (argc < 2)
+		filenameIN = "test.jpg";
+	else
+		filenameIN = argv[1];
 
+	string filenameOUT = "testOUT.bmp";
+	filenameOUT = filenameIN.substr(0,filenameIN.size()-3);
+	filenameOUT += "bmp";
 
-    string filenameOUT = "testOUT.bmp";
 
     int threshold = 150, maxValue = 255;
     int thresholdType = CV_THRESH_BINARY;
 
     IplImage *srcImg=0,*gray=0,*grayThresh=0;
-    srcImg = cvLoadImage("test.jpg",1);
+	srcImg = cvLoadImage(filenameIN.c_str(),1);
 
     gray = cvCreateImage( cvSize(srcImg->width, srcImg->height), IPL_DEPTH_8U, 1 );
 
