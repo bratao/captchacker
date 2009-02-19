@@ -1,0 +1,44 @@
+#include "cv.h"
+#include "cxcore.h"
+#include "highgui.h"
+#include "iostream"
+
+using namespace std;
+
+int main()
+{
+    IplImage* newImg = NULL;
+    IplImage* dilateImg = NULL;
+    IplImage* erodeImg = NULL;
+    cvNamedWindow("src", 1);
+    cvNamedWindow("dilate",1);
+    cvNamedWindow("erode",1);
+    //load original image
+    newImg = cvLoadImage("test.jpg",1);
+    cvShowImage( "src", newImg );
+
+    //make a copy of the original image
+    dilateImg=cvCloneImage( newImg );
+    erodeImg=cvCloneImage( newImg );
+
+    //dilate image
+    cvDilate(newImg,dilateImg,NULL,4);
+
+    //erode image
+    cvErode(newImg,erodeImg,NULL,4);
+    cvShowImage( "dilate", dilateImg );
+    cvShowImage( "erode", erodeImg );
+    cvWaitKey(0);
+    cvDestroyWindow( "src" ); cvDestroyWindow( "dilate" ); cvDestroyWindow( "erode" );
+    cvReleaseImage( &newImg );   cvReleaseImage( &dilateImg ); cvReleaseImage( &erodeImg );
+    
+    char[] 
+
+    if(!cvSaveImage("testOUT.jpg",erodeImg)){
+        cout << "WARNING: Pic can't be saved" <<endl;
+
+    }
+
+
+  return 0;
+}
