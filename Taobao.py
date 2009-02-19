@@ -3,7 +3,6 @@ import urllib2
 import os
 import cookielib
 import time
-import re
 
 #TRACEBACK
 import traceback
@@ -30,14 +29,16 @@ def html(s):
     f.close()
     os.startfile("a.html")
 
-def request(URL, data=None, headers={}):
+def request(URL, data=None, headers={}, param=0):
     req = urllib2.Request(URL, data)
     for key, content in headers.items():
         req.add_header(key, content)
     handle = urllib2.urlopen(req)
     data=handle.read()
-    return data
-
+    if not param:
+        return data, handle
+    else:
+        return data, handle, req
 
 def write_file(file, s):
     f=open(file, 'wb')
@@ -46,26 +47,17 @@ def write_file(file, s):
 
 
 
-LIEN_IMAGES = "http://www.clubic.com/api/creer_un_compte.php"
+LIEN_IMAGES = "http://checkcode.taobao.com/auction/checkcode?sessionID=60b6ffe68495e74ad6dcb6fa1c91626a"
 
 
 
 
 def save_image(i):
-    data = request(LIEN_IMAGES)
-    captcha_urls = re.findall('(http://www.clubic.com/divers/image-code.php\?refresh=([^"]*))"', data)
-    
-    if not captcha_urls:
-        print "No captcha link..."
-        return
-    
-    data = request(captcha_urls[0][0])
-    write_file("<sClubic/%s.png"%captcha_urls[0][1], data)
-    print i, captcha_urls[0][1]
+    a, b, req1 = request(LIEN_IMAGES, param=1)
+    write_file("Taobao/Image%03d.jpg"%i, a)
+    print i
 
 
-for i in range(100):
+for i in range(1000):
     save_image(i)
-
-raw_input()
 
