@@ -7,6 +7,7 @@ from Captcha import Words
 import random
 import os
 import ImageFont
+import ImageChops
 
 import Image
 
@@ -50,7 +51,7 @@ class MyCaptcha(ImageCaptcha):
 
 def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
                  DISTORTION_W_MIN,DISTORTION_W_MAX, DISTORTION_H_MIN,DISTORTION_H_MAX,
-                 SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, fonts, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE, SEUIL):
+                 SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, fonts, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE, SEUIL, ROTATION_RANGE=[]):
     if not os.path.isdir(DESTINATION_FOLDER, ):
         os.mkdir(DESTINATION_FOLDER)
     else:
@@ -83,10 +84,27 @@ def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
                                         else:
                                             val = 255
                                         image.putpixel((i,j), val)
-                        
-                                file = os.path.join(DESTINATION_FOLDER,elem,elem+'_'+font_name+'_'+str(scale)+'_'+str(distort_w)+'_'+str(distort_h)+'_'+str(alignx)+'_'+str(aligny)+'.bmp')
+                                
+                                file = os.path.join(DESTINATION_FOLDER,elem,elem+'_'+font_name+'_'+str(scale)+'_'+str(distort_w)+'_'+str(distort_h)+'_'+str(alignx)+'_'+str(aligny)+'_0'+'.bmp')
                                 image.save(file)
                                 print file
+                                
+                                if ROTATION_RANGE:
+                                    #invert = image.point(lambda i : 255 - i)
+                                    invert = ImageChops.invert(image)
+                                    for rotation in ROTATION_RANGE:
+                                        image1 = invert.rotate(rotation)
+                                        file = os.path.join(DESTINATION_FOLDER,elem,elem+'_'+font_name+'_'+str(scale)+'_'+str(distort_w)+'_'+str(distort_h)+'_'+str(alignx)+'_'+str(aligny)+'_'+str(rotation)+'.bmp')
+                                        image1 = ImageChops.invert(image1)
+                                        image1.save(file)
+                                        print file
+                                        
+                                        image1 = invert.rotate(-rotation)
+                                        file = os.path.join(DESTINATION_FOLDER,elem,elem+'_'+font_name+'_'+str(scale)+'_'+str(distort_w)+'_'+str(distort_h)+'_'+str(alignx)+'_'+str(aligny)+'_'+str(-rotation)+'.bmp')
+                                        image1 = ImageChops.invert(image1)
+                                        image1.save(file)
+                                        print file
+                                    
         print elem + " files generated.\n"
 
 

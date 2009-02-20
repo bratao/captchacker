@@ -52,7 +52,7 @@ inline int func_compare_area_cc(const void *a, const void *b)
 inline int func_compare_pos_cc(const void *a, const void *b)
 {
 	//Ordre croissant par position
-	return (*((CC**) a))->comp->rect.x - (*((CC**) b))->comp->rect.y;
+	return (*((CC**) a))->comp->rect.x - (*((CC**) b))->comp->rect.x;
 }
 
 
