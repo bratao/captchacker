@@ -47,13 +47,13 @@ def preprocess_captcha_part(file, folder=".", parent = None):
         pass
     
     letter1 = Image.open(os.path.join(os.getcwd(), "letter1.bmp")).copy()
-    letter1_algo = letter1.point(lambda i: (1 - i/255.))
+    letter1_algo = letter1.point(lambda i: (i/255.))
     
     letter2 = Image.open(os.path.join(os.getcwd(), "letter2.bmp")).copy()
-    letter2_algo = letter2.point(lambda i: (1 - i/255.))
+    letter2_algo = letter2.point(lambda i: (i/255.))
     
     letter3 = Image.open(os.path.join(os.getcwd(), "letter3.bmp")).copy()
-    letter3_algo = letter3.point(lambda i: (1 - i/255.))
+    letter3_algo = letter3.point(lambda i: (i/255.))
     
     os.remove("letter1.bmp")
     os.remove("letter2.bmp")

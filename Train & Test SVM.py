@@ -35,6 +35,7 @@ if not os.path.isfile(os.path.join(MODEL_FOLDER, MODEL_FILE)) or GENERATE_ANYWAY
                 im = Image.open(os.path.join(folder, file))
                 labels.append(ord(folder[-1])-65)
                 samples.append(map(lambda e:e/255., list(im.getdata())))
+                print map(lambda e:e/255., list(im.getdata()))
     print "Done.\n"
 
     print "GENERATING MODEL..."
@@ -43,7 +44,7 @@ if not os.path.isfile(os.path.join(MODEL_FOLDER, MODEL_FILE)) or GENERATE_ANYWAY
     size = len(samples)
 
     #param = svm_parameter(C = 10,nr_weight = 2,weight_label = [1,0],weight = [10,1], probability=1)
-    param = svm_parameter(kernel_type = RBF, C=100, probability = 1,gamma=1.15)
+    param = svm_parameter(kernel_type = RBF, C=100, probability = 1)
 
     #kernels : LINEAR, POLY, RBF, and SIGMOID
     #types : C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, and NU_SVR

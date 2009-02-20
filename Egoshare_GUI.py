@@ -1,5 +1,4 @@
 #!coding: utf-8
-#!coding: utf-8
 import thread
 import os
 import time
@@ -42,7 +41,7 @@ class MyFrame(wx.Frame):
     def __init__(self, zoom):
         self.zoom = zoom
         self.model = 1
-        wx.Frame.__init__(self, None, -1, "Captcha Breaker", size=(600, 420))
+        wx.Frame.__init__(self, None, -1, "Egoshare Captcha Breaker", size=(600, 420))
 
         taille = (CAPTCHA_WIDTH*zoom, CAPTCHA_HEIGHT*zoom)
         self.image_input_window = wx.StaticBitmap(self, -1, size = taille, bitmap = wx.EmptyBitmap(*taille))
@@ -163,7 +162,6 @@ class MyFrame(wx.Frame):
         
         self.captcha_selected = False
         self.model_selected = False
-        self.actif = False
         
         
         ###############################################################################
@@ -236,21 +234,17 @@ class MyFrame(wx.Frame):
 ########################### EVEMENEMENTS GRAPHIQUES ###########################
 ###############################################################################
     def OnLaunch(self, evt):
-        if not self.actif:
-            if not self.captcha_selected:
-                wx.MessageBox("Selectionner le Captcha !", "Donnee manquante")
-                return
-            if not self.model_selected:
-                wx.MessageBox("Selectionner le modele SVM !", "Donnee manquante")
-                #return
+        if not self.captcha_selected:
+            wx.MessageBox("Selectionner le Captcha !", "Donnee manquante")
+            return
+        if not self.model_selected:
+            wx.MessageBox("Selectionner le modele SVM !", "Donnee manquante")
+            #return
+        
+        thread.start_new_thread(Break_Egoshare_Captcha.break_captcha,
+                                (self.model, self.letter1_algo, self.letter2_algo, self.letter3_algo, self))
+
             
-            self.actif = not self.actif
-            thread.start_new_thread(Break_Egoshare_Captcha.break_captcha,
-                                    (self.model, self.letter1_algo, self.letter2_algo, self.letter3_algo, self))
-        else:
-            self.actif = not self.actif
-        
-        
         
     def OnSelectModel(self, evt):
         dlg = wx.FileDialog(self, "Selectionnez le modele", os.path.join(os.getcwd(),MODEL_FOLDER), DEFAULT_MODEL_FILE,
@@ -282,6 +276,7 @@ class MyFrame(wx.Frame):
             self.setCaptchaImage(self.beau_captcha)
             self.setThumbs(self.letter1, self.letter2, self.letter3)
             self.captcha_selected = True
+            self.setResults("", "", "", "", "", "")
         self.Update()
 ###############################################################################
 ###############################################################################
