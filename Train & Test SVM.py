@@ -35,7 +35,6 @@ if not os.path.isfile(os.path.join(MODEL_FOLDER, MODEL_FILE)) or GENERATE_ANYWAY
                 im = Image.open(os.path.join(folder, file))
                 labels.append(ord(folder[-1])-65)
                 samples.append(map(lambda e:e/255., list(im.getdata())))
-                print map(lambda e:e/255., list(im.getdata()))
     print "Done.\n"
 
     print "GENERATING MODEL..."
