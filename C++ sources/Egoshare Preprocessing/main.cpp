@@ -45,7 +45,7 @@ typedef struct CC
 
 inline int func_compare_area_cc(const void *a, const void *b)
 {
-	//Ordre décroissant par aire
+	//Ordre dÃ©croissant par aire
 	return (*((CC**) b))->comp->area - (*((CC**) a))->comp->area;
 }
 
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     cvThreshold(grayThresh, grayThresh, threshold, maxValue, thresholdType);
 
 
-	//Sélection de toutes les composantes connexes en noir
+	//SÃ©lection de toutes les composantes connexes en noir
 	std::vector<CC*> CCs;
 	for (int i=0; i<grayThresh->width; ++i)
 	{
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 
 	cout << CCs.size() << " connected components found." << endl;
 
-	//Tri décroissant selon l'aire des composantes connexes
+	//Tri dÃ©croissant selon l'aire des composantes connexes
 	qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_area_cc);
 
 	//On ne garde que 3 composantes connexes
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 		letters.push_back(letter);
 	}
 
-	//Remplissage des imagettes par les sous-rectangles de l'image thresholdée
+	//Remplissage des imagettes par les sous-rectangles de l'image thresholdÃ©e
 	for (int index_image=0; index_image<letters.size(); ++index_image)
 	{
 		IplImage *letter = letters[index_image];
@@ -176,12 +176,11 @@ int main(int argc, char *argv[])
     //}
     //cout << filenameOUT << " successfully written" << endl;
 
-	cvWaitKey(0);
+	//cvWaitKey(0);
     cvReleaseImage( &grayThresh );
 	cvReleaseImage( &srcImg );
 
 
-	system("pause");
 
     return 0;
 

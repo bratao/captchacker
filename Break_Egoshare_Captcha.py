@@ -43,8 +43,8 @@ def preprocess_captcha_part(file, folder=".", parent = None):
         str = '""'+os.path.join(os.getcwd(), "Egoshare", 'Egoshare.exe" "'+file+'""')
         os.system(str)
     else:
-        #Some Linux stuff :)
-        pass
+        str = os.path.join("\ ".join(os.getcwd().split(" ")) ,"Egoshare", "\ ".join('Egoshare Preprocessing'.split(' '))+" "+"\ ".join(file.split(" ")))
+        os.system(str)
     
     letter1 = Image.open(os.path.join(os.getcwd(), "letter1.bmp")).copy()
     letter1_algo = letter1.point(lambda i: (i/255.))
