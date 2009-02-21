@@ -137,13 +137,18 @@ def write(s):
 
 if __name__ == "__main__":
     MODEL_FOLDER = 'Egoshare/Models'
-    
     MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
-    
     LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas'
     
-    for MODEL_FILE in MODEL_FILES:
-        model = load_model(os.path.join(MODEL_FOLDER, MODEL_FILE))
+    try:
+        print MODEL_FILE
+    except:
+        MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
+    else:
+        MODEL_FILES = [MODEL_FILE]
+    
+    for file in MODEL_FILES:
+        model = load_model(os.path.join(MODEL_FOLDER, file))
         
         nbs = 0
         errors = 0
@@ -163,5 +168,3 @@ if __name__ == "__main__":
         print "\tSuccess rate: ", (1 - (1.*errors/nbs))*100, "%"
         print 
         write(MODEL_FILE+'\t'+str((1 - (1.*errors/nbs))*100)+"%")
-    raw_input()
-

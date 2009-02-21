@@ -12,5 +12,20 @@ model_C=5000_KERNEL=2.svm	52.0%
 APRES AMELIORATION DU JEU DE DONNEES:
 model_C=100_KERNEL=2.svm	54.0%
 model_C=1000_KERNEL=2.svm	54.0%
+<<<<<<< .mine
+model_C=10000_KERNEL=2.svm	54.0%
+
+ESSAIS (un seul alignement):
+model_522chiffres_aligny=1_C=1000_KERNEL=2.svm	44.0%
+model_aligny=0.5_C=100_KERNEL=2.svm	31.0%
+model_aligny=0.5_C=100_KERNEL=2.svm	31.0%
+
+TESTS DES NOYAUX:
+model_aligny=0.7_C=1000_KERNEL=2.svm	51.0%
+model_aligny=0.7_C=1000_KERNEL=1.svm	51.0%
+model_aligny=0.7_C=1000_KERNEL=3.svm	38.0%
+model_aligny=0.7_C=1000_KERNEL=4.svm	0.0%
+model_aligny=0.7_C=1000_KERNEL=0.svm	47.0%
+=======
 model_C=1000_KERNEL=2.svm	52.0%
 model_C=1000_KERNEL=2.svm	52.0%

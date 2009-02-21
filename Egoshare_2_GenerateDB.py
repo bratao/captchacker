@@ -29,10 +29,10 @@ if GENERATE_TRAINING_SET:
     SCALE_MIN = 17
     SCALE_MAX = 22
     STEP = 1
-    ALIGN_RANGEY = [0.6, 1]
+    ALIGN_RANGEY = [0.7]
     ALIGN_RANGEX = [0.5]
     SEUIL_RANGE = [160, 180, 200]
-    ROTATIONS = [2, 4, 6, 9, 13, 17, 22, 27]
+    ROTATIONS = [2, 4, 6, 9, 13, 17, 20, 22, 25, 27]
     FONTS = [("Fonts/comic.ttf", (140, 160)),
              ("Fonts/vera.ttf", (160, 180)),
              ("Fonts/califb.ttf", (160, 180))]
