@@ -78,7 +78,7 @@ def predict(model, im):
     if VERBOSE:
         print probability
     
-    return chr(65+int(prediction)), str(max(probability[1].values()))
+    return chr(65+int(prediction)), str(max(probability[1].values())), probability[1]
     
     
     
@@ -94,16 +94,16 @@ def break_captcha(model, letter1_algo, letter2_algo, letter3_algo, parent=None):
     liste_probas = []
     
     if not TEST:
-        prediction1, max_score1 = predict(model, letter1_algo)
-        prediction2, max_score2 = predict(model, letter2_algo)
-        prediction3, max_score3 = predict(model, letter3_algo)
+        prediction1, max_score1, dico1 = predict(model, letter1_algo)
+        prediction2, max_score2, dico2 = predict(model, letter2_algo)
+        prediction3, max_score3, dico3 = predict(model, letter3_algo)
     else:
         prediction1, max_score1 = "M", "0.21313"
         prediction2, max_score2 = "M", "0.21313"
         prediction3, max_score3 = "M", "0.21313"
 
     if parent:
-        parent.setResults(prediction1, max_score1, prediction2, max_score2, prediction3, max_score3)
+        parent.setResults(prediction1, max_score1, prediction2, max_score2, prediction3, max_score3, dico1, dico2, dico3)
 
 
 if __name__ == "__main__":

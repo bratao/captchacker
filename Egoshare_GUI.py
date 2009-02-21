@@ -198,9 +198,11 @@ class MyFrame(wx.Frame):
         self.image_chiffre2.SetBitmap(evt.image2)
         self.image_chiffre3.SetBitmap(evt.image3)
  ###############################################################################
-    def setResults(self, resultat1, score1, resultat2, score2, resultat3, score3):
+    def setResults(self, resultat1, score1, resultat2, score2, resultat3, score3, dico1={}, dico2={}, dico3={}):
         #create the event
-        evt = self.SomeNewSetResultsEvent(resultat1=resultat1, score1=score1, resultat2=resultat2, score2=score2, resultat3=resultat3, score3=score3)
+        evt = self.SomeNewSetResultsEvent(resultat1=resultat1, score1=score1, resultat2=resultat2,
+                                          score2=score2, resultat3=resultat3, score3=score3,
+                                          dico1=dico1, dico2=dico2, dico3=dico3)
         #post the event
         wx.PostEvent(self, evt)
     def OnSetResults(self, evt):
@@ -210,6 +212,19 @@ class MyFrame(wx.Frame):
         self.resultat_chiffre1.SetLabel(evt.resultat1)
         self.resultat_chiffre2.SetLabel(evt.resultat2)
         self.resultat_chiffre3.SetLabel(evt.resultat3)
+        items1 = evt.dico1.items()
+        items1 = map(lambda (a,b) : (b,a), items1)
+        items1.sort(reverse=True)
+        self.score_chiffre1.SetToolTipString("\n".join(map(lambda (b,a) : chr(65+int(a))+" : "+str(b), items1)))
+        items2 = evt.dico2.items()
+        items2 = map(lambda (a,b) : (b,a), items2)
+        items2.sort(reverse=True)
+        self.score_chiffre2.SetToolTipString("\n".join(map(lambda (b,a) : chr(65+int(a))+" : "+str(b), items2)))
+        items3 = evt.dico3.items()
+        items3 = map(lambda (a,b) : (b,a), items3)
+        items3.sort(reverse=True)
+        self.score_chiffre3.SetToolTipString("\n".join(map(lambda (b,a) : chr(65+int(a))+" : "+str(b), items3)))
+        self.resultat_chiffre1.SetToolTipString("zefzhefzhefz\t:\tzjfgzhegfz\nzefzhefzhefz\t:\tzjfgzhegfz")
  ###############################################################################
     def setCaptchaImage(self, pil_image):
         #create the event
