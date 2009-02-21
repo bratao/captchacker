@@ -19,7 +19,9 @@ def load_model(chemin, parent=None, fichier = ""):
         print 'The specified model file: \"'+chemin +'\" was not found. Aborting.'
         sys.exit(1)
     else:
-        print "Loading model..."
+        print "####################################################################################"
+        print "\tLoading model ", chemin
+        print "####################################################################################"
         if parent:
             parent.SetPathLabel("Loading model...")
         model = svm_model(chemin)
@@ -129,27 +131,29 @@ sys.excepthook=Myexcepthook
 
 
 if __name__ == "__main__":
-    MODEL_FILE = 'Egoshare/Models/model_califb+vera.svm'    
+    MODEL_FILES = ['Egoshare/Models/model_califb+vera.svm',
+                  'Egoshare/Models/model_califb+comic.svm',
+                  'Egoshare/Models/model_califb+comic_sans distortion_variation-seuil_c=100.svm']
     LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas'
-    model = load_model(MODEL_FILE)
     
-    nbs = 0
-    errors = 0
-    for folder, subfolders, files in os.walk(LABELED_CAPTCHAS_FOLDER):
-        for file in [file for file in files if file[-4:] == ".jpg"]:
-            letter1_algo, letter2_algo, letter3_algo = preprocess_captcha_part(os.path.join(folder, file))
-            prediction = break_captcha(model, letter1_algo, letter2_algo, letter3_algo)
-            print "SOLUTION: ", file[:3], "\t",
-            print "PREDICTION: ", prediction, "\t",
-            if file[:3] == prediction:
-                print "SUCCESS"
-            else:
-                print "FAILURE"
-                errors += 1
-            nbs += 1
-    print
-    print "##########################################"
-    print "\tSuccess rate: ", (1 - (1.*errors/nbs))*100
-    print "##########################################"
+    for MODEL_FILE in MODEL_FILES:
+        model = load_model(MODEL_FILE)
+        
+        nbs = 0
+        errors = 0
+        for folder, subfolders, files in os.walk(LABELED_CAPTCHAS_FOLDER):
+            for file in [file for file in files if file[-4:] == ".jpg"]:
+                letter1_algo, letter2_algo, letter3_algo = preprocess_captcha_part(os.path.join(folder, file))
+                prediction = break_captcha(model, letter1_algo, letter2_algo, letter3_algo)
+                print "SOLUTION: ", file[:3], "\t",
+                print "PREDICTION: ", prediction, "\t",
+                if file[:3] == prediction:
+                    print "SUCCESS"
+                else:
+                    print "FAILURE"
+                    errors += 1
+                nbs += 1
+        print "\tSuccess rate: ", (1 - (1.*errors/nbs))*100
+        print 
     raw_input()
 
