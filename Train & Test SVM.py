@@ -86,6 +86,7 @@ def analyze_folder(folder):
                 errors += 1
             nb += 1
     print "Errors: %d / %d\n" % (errors, nb)
+    return 100.*errors/nb
 
 
 
@@ -95,21 +96,28 @@ print """
 ##############################################################################
 """
 
+error_rate_tr = 0
+nb_tr = 0
 print "Test on training set:"
 print "---------------------"
 for subdir in os.listdir(TRAINING_FOLDER):
     if subdir[0] != ".":
         print "Testing on", subdir[-1]
-        analyze_folder(os.path.join(TRAINING_FOLDER, subdir))
+        error_rate_tr += analyze_folder(os.path.join(TRAINING_FOLDER, subdir))
+        nb_tr += 1
+error_rate_tr /= nb_tr
 
-
+error_rate_test = 0
+nb_test = 0
 print "Test on test set:"
 print "-----------------"
 for subdir in os.listdir(TEST_FOLDER):
     if subdir[0] != ".":
         print "Testing on", subdir[-1]
-        analyze_folder(os.path.join(TEST_FOLDER, subdir))
+        error_rate_test += analyze_folder(os.path.join(TEST_FOLDER, subdir))
+        nb_test += 1
+error_rate_test /= nb_test
 
-
-
-
+print
+print "Error on training set:", error_rate_tr, '%'
+print "Error on test set:", error_rate_test, '%'
