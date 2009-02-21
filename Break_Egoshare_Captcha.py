@@ -129,6 +129,11 @@ def Myexcepthook(type, value, tb):
 sys.excepthook=Myexcepthook
 
 
+def write(s):
+    f=open("stats.txt", "a")
+    f.write(s+"\n")
+    f.close()
+
 
 if __name__ == "__main__":
     MODEL_FOLDER = 'Egoshare/Models'
@@ -140,11 +145,7 @@ if __name__ == "__main__":
                    'model_C=100_KERNEL=0.svm',
                    'model_C=100_KERNEL=2.svm',
                    'model_C=1000_KERNEL=0.svm',
-                   'model_C=1000_KERNEL=2.svm',
-                   'model_califb+comic.svm',
-                   'model_califb+comic_sans distortion_variation-seuil_c=100.svm',
-                   'model_califb+vera.svm',
-                   'model_califb+vera+comic_sans_distortion_c=100.svm']
+                   'model_C=1000_KERNEL=2.svm']
     
     LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas'
     
@@ -166,7 +167,8 @@ if __name__ == "__main__":
                     #print "FAILURE"
                     errors += 1
                 nbs += 1
-        print "\tSuccess rate: ", (1 - (1.*errors/nbs))*100
+        print "\tSuccess rate: ", (1 - (1.*errors/nbs))*100, "%"
         print 
+        write(MODEL_FILE+'\t'+str((1 - (1.*errors/nbs))*100)+"%")
     raw_input()
 

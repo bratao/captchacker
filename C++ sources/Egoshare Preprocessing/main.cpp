@@ -45,12 +45,13 @@ typedef struct CC
 
 inline int func_compare_area_cc(const void *a, const void *b)
 {
-	//Ordre dÃ©croissant par aire
+	//Ordre décroissant par aire
 	return (*((CC**) b))->comp->area - (*((CC**) a))->comp->area;
 }
 
 inline int func_compare_pos_cc(const void *a, const void *b)
 {
+	//cout << "COMPARISON: " << (*((CC**) a))->comp->rect.x << " " << (*((CC**) b))->comp->rect.x << endl;
 	//Ordre croissant par position
 	return (*((CC**) a))->comp->rect.x - (*((CC**) b))->comp->rect.x;
 }
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
     cvThreshold(grayThresh, grayThresh, threshold, maxValue, thresholdType);
 
 
-	//SÃ©lection de toutes les composantes connexes en noir
+	//Sélection de toutes les composantes connexes en noir
 	std::vector<CC*> CCs;
 	for (int i=0; i<grayThresh->width; ++i)
 	{
@@ -113,18 +114,43 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	cout << CCs.size() << " connected components found." << endl;
+	//cout << CCs.size() << " connected components found." << endl;
 
-	//Tri dÃ©croissant selon l'aire des composantes connexes
+	//cout << "BEFORE" << endl;
+	//for (int i=0; i<CCs.size(); ++i)
+	//	cout << CCs[i]->comp->area << " ";
+	//cout << endl;
+	//Tri décroissant selon l'aire des composantes connexes
 	qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_area_cc);
+
+	//cout << "AFTER AREA SORT" << endl;
+	//for (int i=0; i<CCs.size(); ++i)
+	//	cout << CCs[i]->comp->area << " ";
+	//cout << endl;
 
 	//On ne garde que 3 composantes connexes
 	int size = CCs.size();
 	for (int i=3; i<size; ++i)
 		CCs.pop_back();
 
+	//cout << "AFTER POP" << endl;
+	//for (int i=0; i<CCs.size(); ++i)
+	//	cout << CCs[i]->comp->area << " ";
+	//cout << endl;
+
+	//cout << "BEFORE POS SORT" << endl;
+	//for (int i=0; i<CCs.size(); ++i)
+	//	cout << CCs[i]->comp->rect.x << " ";
+	//cout << endl;
+
 	//Tri croissant selon l'abscisse de la composante connexe
 	qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_pos_cc);
+
+	//cout << "AFTER POS SORT" << endl;
+	//for (int i=0; i<CCs.size(); ++i)
+	//	cout << CCs[i]->comp->rect.x << " ";
+	//cout << endl;
+
 
 	std::vector<IplImage*> letters;
 	for (int i=0; i<3; ++i)
@@ -135,7 +161,7 @@ int main(int argc, char *argv[])
 		letters.push_back(letter);
 	}
 
-	//Remplissage des imagettes par les sous-rectangles de l'image thresholdÃ©e
+	//Remplissage des imagettes par les sous-rectangles de l'image thresholdée
 	for (int index_image=0; index_image<letters.size(); ++index_image)
 	{
 		IplImage *letter = letters[index_image];
@@ -144,6 +170,7 @@ int main(int argc, char *argv[])
 		int offsetx = (WIDTH -  cc->comp->rect.width)/2;
 		int offsety = (HEIGHT - cc->comp->rect.height)/2;
 
+		//cout << cc->comp->rect.width<< " " << cc->comp->rect.height << endl;
 		//Recopiage de la sous-image
 		for (int i=1; i<cc->mask->width-1; ++i)
 		{
@@ -151,15 +178,21 @@ int main(int argc, char *argv[])
 			{
 				if (cvGet2D(cc->mask, j, i).val[0] == 1)
 				{
+					int Y = j - cc->comp->rect.y + offsety;
+					int X = i - cc->comp->rect.x + offsetx;
+
+					if ((X>0) && (X<WIDTH) && (Y>0) && (Y<HEIGHT))
+					{
 					cvSet2D(letter,
 						j - cc->comp->rect.y + offsety,
 						i - cc->comp->rect.x + offsetx,
 						cvScalar(0));
+					}
 				}
 			}
 		}
 
-		cout << "Lettre " << index_image << " preprocessed!" << endl;
+		//cout << "Lettre " << index_image << " preprocessed!" << endl;
 	}
 
 
@@ -180,7 +213,7 @@ int main(int argc, char *argv[])
     cvReleaseImage( &grayThresh );
 	cvReleaseImage( &srcImg );
 
-
+	//system("pause");
 
     return 0;
 

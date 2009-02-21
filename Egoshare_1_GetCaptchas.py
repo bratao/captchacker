@@ -59,6 +59,6 @@ def save_image(i):
 
 
 
-for i in range(1000):
+for i in range(50):
     save_image(i)
 
