@@ -1,7 +1,7 @@
 import os
 import shutil
 
-LABELLED_CAPTCHAS_FOLDER = "Labelled Catpchas"
+LABELLED_CAPTCHAS_FOLDER = "Labelled Catpchas Training"
 DEST_FOLDER = "Simulated_digits"
 
 for i in range(10):

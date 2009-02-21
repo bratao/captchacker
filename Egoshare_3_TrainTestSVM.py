@@ -11,7 +11,7 @@ KERNEL_TYPE = [RBF]
 for C in CRANGE:
     for KERNEL in KERNEL_TYPE:
         
-        TRAINING_FOLDER = 'Egoshare/DBTraining'
+        #TRAINING_FOLDER = 'Egoshare/DBTraining'
         TRAINING_FOLDER = 'Egoshare/Simulated_digits'
         TEST_FOLDER = 'Egoshare/DBTest'
         VERBOSE = 0

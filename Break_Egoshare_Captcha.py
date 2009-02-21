@@ -138,7 +138,7 @@ def write(s):
 if __name__ == "__main__":
     MODEL_FOLDER = 'Egoshare/Models'
     MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
-    LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas'
+    LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas Test'
     
     try:
         print MODEL_FILE
