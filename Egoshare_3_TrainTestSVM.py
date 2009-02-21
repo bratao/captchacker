@@ -2,11 +2,11 @@
 
 from svm import *
 
-CRANGE = [1, 10, 100, 1000]
-KERNEL_TYPE = [RBF, LINEAR]
+CRANGE = [100, 1000, 10000]
+KERNEL_TYPE = [RBF]
 
 
-for C in [1, 10, 100, 1000]:
+for C in CRANGE:
     for KERNEL in KERNEL_TYPE:
         
         TRAINING_FOLDER = 'Egoshare/DBTraining'

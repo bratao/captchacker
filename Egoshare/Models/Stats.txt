@@ -6,3 +6,9 @@ model_C=100_KERNEL=0.svm	45.0%
 model_C=100_KERNEL=2.svm	52.0%
 model_C=1000_KERNEL=0.svm	45.0%
 model_C=1000_KERNEL=2.svm	52.0%
+model_C=5000_KERNEL=2.svm	52.0%
+
+
+APRES AMELIORATION DU JEU DE DONNEES:
+model_C=100_KERNEL=2.svm	54.0%
+model_C=1000_KERNEL=2.svm	54.0%

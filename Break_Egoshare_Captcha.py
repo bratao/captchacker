@@ -130,7 +130,7 @@ sys.excepthook=Myexcepthook
 
 
 def write(s):
-    f=open("stats.txt", "a")
+    f=open("Egoshare/Models/Stats.txt", "a")
     f.write(s+"\n")
     f.close()
 
@@ -138,14 +138,7 @@ def write(s):
 if __name__ == "__main__":
     MODEL_FOLDER = 'Egoshare/Models'
     
-    MODEL_FILES = ['model_C=1_KERNEL=0.svm',
-                   'model_C=1_KERNEL=2.svm',
-                   'model_C=10_KERNEL=0.svm',
-                   'model_C=10_KERNEL=2.svm',
-                   'model_C=100_KERNEL=0.svm',
-                   'model_C=100_KERNEL=2.svm',
-                   'model_C=1000_KERNEL=0.svm',
-                   'model_C=1000_KERNEL=2.svm']
+    MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
     
     LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas'
     

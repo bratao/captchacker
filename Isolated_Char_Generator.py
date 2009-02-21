@@ -51,7 +51,7 @@ class MyCaptcha(ImageCaptcha):
 
 def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
                  DISTORTION_W_MIN,DISTORTION_W_MAX, DISTORTION_H_MIN,DISTORTION_H_MAX,
-                 SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, fonts, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE, SEUILRANGE, ROTATION_RANGE=[]):
+                 SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, fonts, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE, ROTATION_RANGE=[]):
     if not os.path.isdir(DESTINATION_FOLDER, ):
         os.mkdir(DESTINATION_FOLDER)
     else:
@@ -68,7 +68,7 @@ def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
         if not os.path.isdir(os.path.join(DESTINATION_FOLDER,elem)):
             os.mkdir(os.path.join(DESTINATION_FOLDER,elem))
         
-        for font in fonts:
+        for font, SEUILRANGE in fonts:
             font_name = font.split('/')[-1].split('.')[0]
             for scale in range(SCALE_MIN, SCALE_MAX, STEP):
                 for distort_w in range(DISTORTION_W_MIN,DISTORTION_W_MAX, STEP):
