@@ -29,3 +29,6 @@ model_aligny=0.7_C=1000_KERNEL=0.svm	47.0%
 =======
 model_C=1000_KERNEL=2.svm	52.0%
 model_C=1000_KERNEL=2.svm	52.0%
+
+CAPTCHA_DATA:
+model_WITH_CAPTCHA_DATA_C=1000_KERNEL=2.svm	99.8158379374%
