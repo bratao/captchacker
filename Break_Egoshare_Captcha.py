@@ -44,7 +44,8 @@ def preprocess_captcha_part(file, folder=".", parent = None):
         os.system(str)
     else:
         str = os.path.join("\ ".join(os.getcwd().split(" ")) ,"Egoshare", "\ ".join('Egoshare Preprocessing'.split(' '))+" "+"\ ".join(file.split(" ")))
-        os.system(str)
+        os.system(str)
+    
     
     letter1 = Image.open(os.path.join(os.getcwd(), "letter1.bmp")).copy()
     letter1_algo = letter1.point(lambda i: (i/255.))
@@ -65,32 +66,26 @@ def preprocess_captcha_part(file, folder=".", parent = None):
         letter2 = letter2.convert('RGB').resize((parent.zoom*w, parent.zoom*h))
         letter3 = letter3.convert('RGB').resize((parent.zoom*w, parent.zoom*h))
 
-    return beau_captcha, letter1, letter2, letter3, letter1_algo, letter2_algo, letter3_algo
-    
+    if parent:
+        return beau_captcha, letter1, letter2, letter3, letter1_algo, letter2_algo, letter3_algo
+    else:
+        return letter1_algo, letter2_algo, letter3_algo
+
 
 def predict(model, im):
     data = list(im.getdata())
     prediction = model.predict(data)
     probability = model.predict_probability(data)  
     
-    print chr(65+int(prediction)), max(probability[1].values())
-    
     if VERBOSE:
-        print probability
+        print chr(65+int(prediction)), max(probability[1].values())
+        #print probability
     
     return chr(65+int(prediction)), str(max(probability[1].values())), probability[1]
     
     
     
 def break_captcha(model, letter1_algo, letter2_algo, letter3_algo, parent=None):
-    
-    if not parent:
-        print """
-        ##############################################################################
-        ############################    BREAKING CAPTCHA    ################################
-        ##############################################################################
-        """
-
     liste_probas = []
     
     if not TEST:
@@ -104,19 +99,57 @@ def break_captcha(model, letter1_algo, letter2_algo, letter3_algo, parent=None):
 
     if parent:
         parent.setResults(prediction1, max_score1, prediction2, max_score2, prediction3, max_score3, dico1, dico2, dico3)
+    
+    return prediction1+prediction2+prediction3
+
+
+
+
+def test_folder(model):
+    
+    
+    pass
+
+
+
+
+#TRACEBACK
+import traceback
+import sys
+def Myexcepthook(type, value, tb):
+        lines=traceback.format_exception(type, value, tb)
+##        f=open('log.txt', 'a')
+##        f.write("\n".join(lines))
+##        f.close()
+        print "\n".join(lines)
+        raw_input()
+        sys.exit(0)
+sys.excepthook=Myexcepthook
+
 
 
 if __name__ == "__main__":
-    MODEL_FILE = "model.svm"
-    CAPTCHA_FILE = os.path.join("Captchas", 'Image011.jpg')
-    LENGTH_CAPTCHA_PART = 31
+    MODEL_FILE = 'Egoshare/Models/model_califb+vera.svm'    
+    LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas'
+    model = load_model(MODEL_FILE)
     
-    if not TEST:
-        model = load_model(MODEL_FILE)
-    
-    captcha, beau_captcha = preprocess_captcha_part(CAPTCHA_FILE)
-    break_captcha(model, captcha, size=38)
+    nbs = 0
+    errors = 0
+    for folder, subfolders, files in os.walk(LABELED_CAPTCHAS_FOLDER):
+        for file in [file for file in files if file[-4:] == ".jpg"]:
+            letter1_algo, letter2_algo, letter3_algo = preprocess_captcha_part(os.path.join(folder, file))
+            prediction = break_captcha(model, letter1_algo, letter2_algo, letter3_algo)
+            print "SOLUTION: ", file[:3], "\t",
+            print "PREDICTION: ", prediction, "\t",
+            if file[:3] == prediction:
+                print "SUCCESS"
+            else:
+                print "FAILURE"
+                errors += 1
+            nbs += 1
+    print
+    print "##########################################"
+    print "\tSuccess rate: ", (1 - (1.*errors/nbs))*100
+    print "##########################################"
     raw_input()
-
-
 
