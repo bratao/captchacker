@@ -6,6 +6,9 @@ import Image
 import psyco
 psyco.full()
 
+##C=10
+##KERNEL = RBF
+
 if not os.path.isfile(os.path.join(MODEL_FOLDER, MODEL_FILE)) or GENERATE_ANYWAY:
     #Si le modèle n'existe pas ou que l'on veut spécifie GENERATE_ANYWAY=True, on le génère. Sinon, on le charge.
     
@@ -43,7 +46,7 @@ if not os.path.isfile(os.path.join(MODEL_FOLDER, MODEL_FILE)) or GENERATE_ANYWAY
     size = len(samples)
 
     #param = svm_parameter(C = 10,nr_weight = 2,weight_label = [1,0],weight = [10,1], probability=1)
-    param = svm_parameter(kernel_type = RBF, C=100, probability = 1)
+    param = svm_parameter(kernel_type = KERNEL, C=C, probability = 1)
 
     #kernels : LINEAR, POLY, RBF, and SIGMOID
     #types : C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, and NU_SVR
@@ -90,34 +93,34 @@ def analyze_folder(folder):
 
 
 
-print """
-##############################################################################
-############################    TEST MODEL    ################################
-##############################################################################
-"""
-
-error_rate_tr = 0
-nb_tr = 0
-print "Test on training set:"
-print "---------------------"
-for subdir in os.listdir(TRAINING_FOLDER):
-    if subdir[0] != ".":
-        print "Testing on", subdir[-1]
-        error_rate_tr += analyze_folder(os.path.join(TRAINING_FOLDER, subdir))
-        nb_tr += 1
-error_rate_tr /= nb_tr
-
-error_rate_test = 0
-nb_test = 0
-print "Test on test set:"
-print "-----------------"
-for subdir in os.listdir(TEST_FOLDER):
-    if subdir[0] != ".":
-        print "Testing on", subdir[-1]
-        error_rate_test += analyze_folder(os.path.join(TEST_FOLDER, subdir))
-        nb_test += 1
-error_rate_test /= nb_test
-
-print
-print "Error on training set:", error_rate_tr, '%'
-print "Error on test set:", error_rate_test, '%'
+##print """
+################################################################################
+##############################    TEST MODEL    ################################
+################################################################################
+##"""
+##
+##error_rate_tr = 0
+##nb_tr = 0
+##print "Test on training set:"
+##print "---------------------"
+##for subdir in os.listdir(TRAINING_FOLDER):
+##    if subdir[0] != ".":
+##        print "Testing on", subdir[-1]
+##        error_rate_tr += analyze_folder(os.path.join(TRAINING_FOLDER, subdir))
+##        nb_tr += 1
+##error_rate_tr /= nb_tr
+##
+##error_rate_test = 0
+##nb_test = 0
+##print "Test on test set:"
+##print "-----------------"
+##for subdir in os.listdir(TEST_FOLDER):
+##    if subdir[0] != ".":
+##        print "Testing on", subdir[-1]
+##        error_rate_test += analyze_folder(os.path.join(TEST_FOLDER, subdir))
+##        nb_test += 1
+##error_rate_test /= nb_test
+##
+##print
+##print "Error on training set:", error_rate_tr, '%'
+##print "Error on test set:", error_rate_test, '%'
