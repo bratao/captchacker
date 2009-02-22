@@ -33,7 +33,7 @@ def load_model(chemin, parent=None, fichier = ""):
     return model
 
 
-def preprocess_captcha_part(file, folder=".", parent = None):
+def preprocess_captcha_part(file, folder=".", parent = None, remove=True):
     #Fait l'extraction à  partir de la starting position, sur une largeur length, et fait éventuellement du preprocessing.
     
     if parent:
@@ -42,13 +42,20 @@ def preprocess_captcha_part(file, folder=".", parent = None):
         beau_captcha = beau_captcha.convert('RGB').resize((parent.zoom*w, parent.zoom*h))
     
     if os.name == "nt":
-        str = '""'+os.path.join(os.getcwd(), "Egoshare", 'Egoshare.exe" "'+file+'""')
-        os.system(str)
+        command = '""'+os.path.join(os.getcwd(), "Egoshare", 'Egoshare.exe" "'+file+'""')
+    elif os.name == 'posix':
+        command = os.path.join("\ ".join(os.getcwd().split(" ")) ,"Egoshare", "\ ".join('Egoshare Preprocessing'.split(' '))+" "+"\ ".join(file.split(" ")))
     else:
-        str = os.path.join("\ ".join(os.getcwd().split(" ")) ,"Egoshare", "\ ".join('Egoshare Preprocessing'.split(' '))+" "+"\ ".join(file.split(" ")))
-        os.system(str)
+        print "OS type non supported"
+        exit(2)
+
+    os.system(command)
     
-    
+    if remove:
+        os.remove("letter1.bmp")
+        os.remove("letter2.bmp")
+        os.remove("letter3.bmp")
+
     letter1 = Image.open(os.path.join(os.getcwd(), "letter1.bmp")).copy()
     letter1_algo = letter1.point(lambda i: (i/255.))
     
@@ -58,17 +65,12 @@ def preprocess_captcha_part(file, folder=".", parent = None):
     letter3 = Image.open(os.path.join(os.getcwd(), "letter3.bmp")).copy()
     letter3_algo = letter3.point(lambda i: (i/255.))
     
-    os.remove("letter1.bmp")
-    os.remove("letter2.bmp")
-    os.remove("letter3.bmp")
-    
+
     if parent:
         w, h = letter1.size
         letter1 = letter1.convert('RGB').resize((parent.zoom*w, parent.zoom*h))
         letter2 = letter2.convert('RGB').resize((parent.zoom*w, parent.zoom*h))
         letter3 = letter3.convert('RGB').resize((parent.zoom*w, parent.zoom*h))
-
-    if parent:
         return beau_captcha, letter1, letter2, letter3, letter1_algo, letter2_algo, letter3_algo
     else:
         return letter1_algo, letter2_algo, letter3_algo
@@ -128,36 +130,4 @@ def write(s):
     f.close()
 
 
-if __name__ == "__main__":
-    MODEL_FOLDER = 'Egoshare/Models'
-    MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
-    LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas Test'
-    
-    try:
-        print MODEL_FILE
-    except:
-        MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
-    else:
-        MODEL_FILES = [MODEL_FILE]
-    
-    for file in MODEL_FILES:
-        model = load_model(os.path.join(MODEL_FOLDER, file))
-        
-        nbs = 0
-        errors = 0
-        for folder, subfolders, files in os.walk(LABELED_CAPTCHAS_FOLDER):
-            for file in [file for file in files if file[-4:] == ".jpg"]:
-                letter1_algo, letter2_algo, letter3_algo = preprocess_captcha_part(os.path.join(folder, file))
-                prediction = break_captcha(model, letter1_algo, letter2_algo, letter3_algo)
-                #print "SOLUTION: ", file[:3], "\t",
-                #print "PREDICTION: ", prediction, "\t",
-                if file[:3] == prediction:
-                    #print "SUCCESS"
-                    pass
-                else:
-                    #print "FAILURE"
-                    errors += 1
-                nbs += 1
-        print "\tSuccess rate: ", (1 - (1.*errors/nbs))*100, "%"
-        print 
-        write(MODEL_FILE+'\t'+str((1 - (1.*errors/nbs))*100)+"%")
+

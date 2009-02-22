@@ -1,6 +1,7 @@
 #!coding: utf-8
 import psyco
 from Isolated_Char_Generator import *
+from Break_Egoshare_Captcha import *
 import shutil
 
 
@@ -76,7 +77,7 @@ if SIMULATION_BASED:
 
 
 
-def Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER):
+def Prepare_Dest_Folder(DEST_FOLDER):
     #Création du dossier de destination
     if not os.path.isdir(DEST_FOLDER):
         os.mkdir(DEST_FOLDER)
@@ -96,21 +97,18 @@ def Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER):
         if not os.path.isdir(folder):
             os.mkdir(folder)
 
+
+
+def Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER):
+    Prepare_Dest_Folder(DEST_FOLDER)
+
     #Remplissage des sous-dossiers
     for folder, subfolders, files in os.walk(CAPTCHA_SOURCE_FOLDER):
         for file in [file for file in files if file[-4:] == ".jpg"]:
             filename = os.path.join(CAPTCHA_SOURCE_FOLDER, file)
             print file
-            
-            if os.name == "nt":
-                command = '""'+os.path.join(os.getcwd(), "Egoshare", 'Egoshare.exe" "'+filename+'""')
-            elif os.name == 'posix':
-                command = os.path.join("\ ".join(os.getcwd().split(" ")) ,"Egoshare", "\ ".join('Egoshare Preprocessing'.split(' '))+" "+"\ ".join(filename.split(" ")))
-            else:
-                print "OS type non supported"
-                exit(2)
 
-            os.system(command)
+            preprocess_captcha_part(os.path.join(folder, file),remove=False)
             
             name1 = file[:-4]+"number_1.bmp"
             name2 = file[:-4]+"number_2.bmp"
@@ -122,8 +120,9 @@ def Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER):
 
 
 if CAPTCHA_BASED:
-    GENERATE_TRAINING_SET = True
-    GENERATE_VALIDATION_SET = True
+    GENERATE_TRAINING_SET = True  # using hand-labelled captchas
+    GENERATE_VALIDATION_SET = True # using hand-labelled captchas
+    GENERATE_COMPUTER_LABELLED_SET = True
 
     if GENERATE_TRAINING_SET:
         print """
@@ -145,5 +144,45 @@ if CAPTCHA_BASED:
         DEST_FOLDER = "Egoshare/DBTest-Captcha_based"
         Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER)
 
+
+    if GENERATE_COMPUTER_LABELLED_SET:
+        print """
+        ##############################################################################
+        ############   COMPUTER  LABELLED  CAPTCHA  BASED   SET   ####################
+        ##############################################################################
+        """
+        DEST_FOLDER = "Egoshare/Computer Labelled Captcha based set"
+        CAPTCHA_SOURCE_FOLDER = "Egoshare/Rough Captchas"
+
+        MODEL_FILE = 'Egoshare/Models/captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm'
+        model = load_model(MODEL_FILE)
+
+        Prepare_Dest_Folder(DEST_FOLDER)
+        
+        #Remplissage des sous-dossiers
+        for folder, subfolders, files in os.walk(CAPTCHA_SOURCE_FOLDER):
+            for file in [file for file in files if file[-4:] == ".jpg"]:
+                filename = os.path.join(CAPTCHA_SOURCE_FOLDER, file)
+                print file
+                
+                name1 = file[:-4]+"number_1.bmp"
+                name2 = file[:-4]+"number_2.bmp"
+                name3 = file[:-4]+"number_3.bmp"
+
+                letter1_algo, letter2_algo, letter3_algo = preprocess_captcha_part(os.path.join(folder, file),remove=False)
+                prediction = break_captcha(model, letter1_algo, letter2_algo, letter3_algo)
+                
+                shutil.move("letter1.bmp", os.path.join(DEST_FOLDER, prediction[0], name1))
+                shutil.move("letter2.bmp", os.path.join(DEST_FOLDER, prediction[1], name2))
+                shutil.move("letter3.bmp", os.path.join(DEST_FOLDER, prediction[2], name3))
+
+
+        print """Done.
+
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        !!!!!!!!!   NOW CORRECT AND COPY MANUALLY COMPUTER LABELLED FILES   !!!!!!!!!!
+        !!!!!!!!!        INTO CAPTCHA BASED TRAINING AND TEST FOLDERS       !!!!!!!!!!
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        """
 
 
