@@ -3,22 +3,20 @@ import psyco
 from Isolated_Char_Generator import *
 import shutil
 
-DEFAULT_SIZE = (20, 20)
+
+CAPTCHA_BASED = True # using captchas from the website
+SIMULATION_BASED = False # using simulated captchas with various fonts
 
 
-CAPTCHA_BASED = True
-FONT_BASED = False
-
-
-if FONT_BASED:
+if SIMULATION_BASED:
+    DEFAULT_SIZE = (20, 20)
     GENERATE_TRAINING_SET = True
     GENERATE_VALIDATION_SET = True
-
 
     if GENERATE_TRAINING_SET:
         print """
         ##############################################################################
-        #########################   TRAINING    SET   ################################
+        ##############   SIMULATION   BASED   TRAINING    SET   ######################
         ##############################################################################
         """
         
@@ -27,7 +25,7 @@ if FONT_BASED:
         elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
         
 
-        DESTINATION_FOLDER = 'Egoshare/DBTraining'
+        DESTINATION_FOLDER = 'Egoshare/DBTraining-Simulation_based'
         CLEAN_DESTINATION_FOLDER = True
         DISTORTION_W_MIN = 0
         DISTORTION_W_MAX = 1
@@ -50,7 +48,7 @@ if FONT_BASED:
     if GENERATE_VALIDATION_SET:
         print """
         ##############################################################################
-        ###########################   TEST   SET      ################################
+        #################   SIMULATION   BASED   TEST    SET   #######################
         ##############################################################################
         """
         
@@ -58,7 +56,7 @@ if FONT_BASED:
         GENERATE_DIGITS = True
         elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
 
-        DESTINATION_FOLDER = 'Egoshare/DBTest'
+        DESTINATION_FOLDER = 'Egoshare/DBTest-Simulation_based'
         CLEAN_DESTINATION_FOLDER = True
         DISTORTION_W_MIN = 0
         DISTORTION_W_MAX = 2
@@ -77,10 +75,8 @@ if FONT_BASED:
                      DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE, ROTATIONS)
 
 
-if CAPTCHA_BASED:
-    LABELLED_CAPTCHAS_TRAINING_FOLDER = "Egoshare/Labelled Catpchas Training"
-    DEST_FOLDER = "Egoshare/DBTraining-Simulation_based"
 
+def Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER):
     #Création du dossier de destination
     if not os.path.isdir(DEST_FOLDER):
         os.mkdir(DEST_FOLDER)
@@ -101,30 +97,53 @@ if CAPTCHA_BASED:
             os.mkdir(folder)
 
     #Remplissage des sous-dossiers
-    for folder, subfolders, files in os.walk(LABELLED_CAPTCHAS_TRAINING_FOLDER):
+    for folder, subfolders, files in os.walk(CAPTCHA_SOURCE_FOLDER):
         for file in [file for file in files if file[-4:] == ".jpg"]:
-            filename = os.path.join(LABELLED_CAPTCHAS_TRAINING_FOLDER, file)
+            filename = os.path.join(CAPTCHA_SOURCE_FOLDER, file)
             print file
             
             if os.name == "nt":
-                str = '""'+os.path.join(os.getcwd(), "Egoshare", 'Egoshare.exe" "'+filename+'""')
-                os.system(str)
+                command = '""'+os.path.join(os.getcwd(), "Egoshare", 'Egoshare.exe" "'+filename+'""')
+            elif os.name == 'posix':
+                command = os.path.join("\ ".join(os.getcwd().split(" ")) ,"Egoshare", "\ ".join('Egoshare Preprocessing'.split(' '))+" "+"\ ".join(filename.split(" ")))
             else:
-                str = os.path.join("\ ".join(os.getcwd().split(" ")) ,"Egoshare", "\ ".join('Egoshare Preprocessing'.split(' '))+" "+"\ ".join(filename.split(" ")))
-                os.system(str)
+                print "OS type non supported"
+                exit(2)
+
+            os.system(command)
             
             name1 = file[:-4]+"number_1.bmp"
             name2 = file[:-4]+"number_2.bmp"
             name3 = file[:-4]+"number_3.bmp"
             
-            os.rename("letter1.bmp", name1)
-            os.rename("letter2.bmp", name2)
-            os.rename("letter3.bmp", name3)
-            
-            shutil.move(name1, os.path.join(DEST_FOLDER, file[0]))
-            shutil.move(name2, os.path.join(DEST_FOLDER, file[1]))
-            shutil.move(name3, os.path.join(DEST_FOLDER, file[2]))
+            shutil.move("letter1.bmp", os.path.join(DEST_FOLDER, file[0], name1))
+            shutil.move("letter2.bmp", os.path.join(DEST_FOLDER, file[1], name2))
+            shutil.move("letter3.bmp", os.path.join(DEST_FOLDER, file[2], name3))
 
+
+if CAPTCHA_BASED:
+    GENERATE_TRAINING_SET = True
+    GENERATE_VALIDATION_SET = True
+
+    if GENERATE_TRAINING_SET:
+        print """
+        ##############################################################################
+        ##############   CAPTCHA   BASED   TRAINING    SET   #########################
+        ##############################################################################
+        """
+        CAPTCHA_SOURCE_FOLDER = "Egoshare/Labelled Catpchas Training"
+        DEST_FOLDER = "Egoshare/DBTraining-Captcha_based"
+        Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER)
+
+    if GENERATE_VALIDATION_SET:
+        print """
+        ##############################################################################
+        #################   CAPTCHA   BASED   TEST    SET   ##########################
+        ##############################################################################
+        """
+        CAPTCHA_SOURCE_FOLDER = "Egoshare/Labelled Catpchas Test"
+        DEST_FOLDER = "Egoshare/DBTest-Captcha_based"
+        Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER)
 
 
 
