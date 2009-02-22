@@ -107,13 +107,6 @@ def break_captcha(model, letter1_algo, letter2_algo, letter3_algo, parent=None):
 
 
 
-def test_folder(model):
-    
-    
-    pass
-
-
-
 
 #TRACEBACK
 import traceback

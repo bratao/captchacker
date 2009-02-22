@@ -33,8 +33,10 @@ def request(URL, data=None, headers={}, param=0):
     req = urllib2.Request(URL, data)
     for key, content in headers.items():
         req.add_header(key, content)
+    
     handle = urllib2.urlopen(req)
     data=handle.read()
+    
     if not param:
         return data, handle
     else:
@@ -52,13 +54,27 @@ LIEN_IMAGES = "http://www.egoshare.com/captcha.php"
 
 
 
-def save_image(i):
-    a, b, req1 = request(LIEN_IMAGES, param=1)
-    write_file("Egoshare/Rough Captchas/Image%03d.jpg"%i, a)
-    print i
+def save_image(i=0, path=""):
+    while True:
+        try:
+            a, b, req1 = request(LIEN_IMAGES, param=1)
+        except Exception, ex:
+            print "Echec ("+str(Exception)+" "+str(ex)+", nouvelle tentative dans 1s..."
+            time.sleep(1)
+        else:
+            break
+    
+    if path is "":
+        file = "Egoshare/Rough Captchas/Image%03d.jpg"%i
+        print i
+    else:
+        file = path
+    write_file(file, a)
+    
+    return file
 
 
-
-for i in range(500):
-    save_image(i)
+if __name__ == "__main__":
+    for i in range(500):
+        save_image(i)
 

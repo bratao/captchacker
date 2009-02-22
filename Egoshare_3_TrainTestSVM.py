@@ -5,14 +5,14 @@ import os
 import time
 
 CRANGE = [1000]
-KERNEL_TYPE = [RBF]
+KERNEL_TYPE = [POLY]
 
 
 for C in CRANGE:
     for KERNEL in KERNEL_TYPE:
         
         #TRAINING_FOLDER = 'Egoshare/DBTraining'
-        TRAINING_FOLDER = 'Egoshare/Simulated_digits'
+        TRAINING_FOLDER = 'Egoshare/DBTraining-Simulation_based'
         TEST_FOLDER = 'Egoshare/DBTest'
         VERBOSE = 0
         MODEL_FOLDER = 'Egoshare/Models'
