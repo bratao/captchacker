@@ -74,82 +74,114 @@ int main(int argc, char *argv[])
 	else
 		filenameIN = argv[1];
 
-	string filenameOUT = "testOUT.bmp";
-	filenameOUT = filenameIN.substr(0,filenameIN.size()-3);
-	filenameOUT += "bmp";
-
 
 	//Seuillage
-    int threshold = 150, maxValue = 255;
-    int thresholdType = CV_THRESH_BINARY;
+	int threshold = 150, maxValue = 255;
+	int thresholdType = CV_THRESH_BINARY;
 
-    IplImage *srcImg=0, *grayThresh=0;
+	IplImage *srcImg=0, *grayThresh=0, *gray=0;
 	srcImg = cvLoadImage(filenameIN.c_str(),1);
 
-    grayThresh = cvCreateImage( cvSize(srcImg->width, srcImg->height), IPL_DEPTH_8U, 1 );
-    cvCvtColor(srcImg, grayThresh, CV_BGR2GRAY );
-    cvThreshold(grayThresh, grayThresh, threshold, maxValue, thresholdType);
+	grayThresh = cvCreateImage( cvSize(srcImg->width, srcImg->height), IPL_DEPTH_8U, 1 );
+	cvCvtColor(srcImg, grayThresh, CV_BGR2GRAY );
+	cvThreshold(grayThresh, grayThresh, threshold, maxValue, thresholdType);
 
-
-	//Sélection de toutes les composantes connexes en noir
+	//On commence par chercher les composantes 8-connexes
+	int connectivity = 4;
 	std::vector<CC*> CCs;
-	for (int i=0; i<grayThresh->width; ++i)
+
+	while (1)
 	{
-		for (int j=0; j<grayThresh->height; ++j)
+		gray = cvCloneImage(grayThresh);
+
+		//Sélection de toutes les composantes connexes en noir
+		CCs.clear();
+		for (int i=0; i<gray->width; ++i)
 		{
-			if (cvGet2D(grayThresh, j, i).val[0] == 0)
+			for (int j=0; j<gray->height; ++j)
 			{
-				CvConnectedComp *comp = new CvConnectedComp;
+				if (cvGet2D(gray, j, i).val[0] == 0)
+				{
+					CvConnectedComp *comp = new CvConnectedComp;
 
-				IplImage *mask = cvCreateImage(cvSize(grayThresh->width+2, grayThresh->height+2), IPL_DEPTH_8U, 1);
-				cvZero(mask);
+					IplImage *mask = cvCreateImage(cvSize(gray->width+2, gray->height+2), IPL_DEPTH_8U, 1);
+					cvZero(mask);
 
-				cvFloodFill(grayThresh, cvPoint(i,j), cvScalar(128),cvScalarAll(0),cvScalarAll(0),comp, 4, mask);
+					cvFloodFill(gray, cvPoint(i,j), cvScalar(128),cvScalarAll(0),cvScalarAll(0),comp, connectivity, mask);
 
-				CC *cc = new CC;
-				cc->mask = mask;
-				cc->comp = comp;
-				CCs.push_back(cc);
+					CC *cc = new CC;
+					cc->mask = mask;
+					cc->comp = comp;
+					CCs.push_back(cc);
+				}
 			}
 		}
+
+		//cout << CCs.size() << " connected components found." << endl;
+
+
+		//cout << "BEFORE" << endl;
+		//for (int i=0; i<CCs.size(); ++i)
+		//	cout << CCs[i]->comp->area << " ";
+		//cout << endl;
+		//Tri décroissant selon l'aire des composantes connexes
+		qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_area_cc);
+
+		//cout << "AFTER AREA SORT" << endl;
+		//for (int i=0; i<CCs.size(); ++i)
+		//	cout << CCs[i]->comp->area << " ";
+		//cout << endl;
+
+		//On ne garde que 3 composantes connexes
+		int size = CCs.size();
+		for (int i=3; i<size; ++i)
+			CCs.pop_back();
+
+		if (connectivity == 4)
+		{
+			//Si une des composantes 4-connexes est un fragment de caractère,
+			//on cherche les composantes 8-connexes
+			if (CCs[2]->comp->area < 30)
+			{
+				connectivity = 8;
+				continue;
+			}
+		}
+
+
+		//cout << "AFTER POP" << endl;
+		//for (int i=0; i<CCs.size(); ++i)
+		//	cout << CCs[i]->comp->area << " ";
+		//cout << endl;
+
+		//cout << "BEFORE POS SORT" << endl;
+		//for (int i=0; i<CCs.size(); ++i)
+		//	cout << CCs[i]->comp->rect.x << " ";
+		//cout << endl;
+
+		//Tri croissant selon l'abscisse de la composante connexe
+		qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_pos_cc);
+
+		//cout << "AFTER POS SORT" << endl;
+		//for (int i=0; i<CCs.size(); ++i)
+		//	cout << CCs[i]->comp->rect.x << " ";
+		//cout << endl;
+
+		break;
+
+
 	}
 
-	//cout << CCs.size() << " connected components found." << endl;
 
-	//cout << "BEFORE" << endl;
-	//for (int i=0; i<CCs.size(); ++i)
-	//	cout << CCs[i]->comp->area << " ";
-	//cout << endl;
-	//Tri décroissant selon l'aire des composantes connexes
-	qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_area_cc);
 
-	//cout << "AFTER AREA SORT" << endl;
-	//for (int i=0; i<CCs.size(); ++i)
-	//	cout << CCs[i]->comp->area << " ";
-	//cout << endl;
 
-	//On ne garde que 3 composantes connexes
-	int size = CCs.size();
-	for (int i=3; i<size; ++i)
-		CCs.pop_back();
 
-	//cout << "AFTER POP" << endl;
-	//for (int i=0; i<CCs.size(); ++i)
-	//	cout << CCs[i]->comp->area << " ";
-	//cout << endl;
 
-	//cout << "BEFORE POS SORT" << endl;
-	//for (int i=0; i<CCs.size(); ++i)
-	//	cout << CCs[i]->comp->rect.x << " ";
-	//cout << endl;
 
-	//Tri croissant selon l'abscisse de la composante connexe
-	qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_pos_cc);
 
-	//cout << "AFTER POS SORT" << endl;
-	//for (int i=0; i<CCs.size(); ++i)
-	//	cout << CCs[i]->comp->rect.x << " ";
-	//cout << endl;
+
+
+
 
 
 	std::vector<IplImage*> letters;
@@ -183,10 +215,10 @@ int main(int argc, char *argv[])
 
 					if ((X>0) && (X<WIDTH) && (Y>0) && (Y<HEIGHT))
 					{
-					cvSet2D(letter,
-						j - cc->comp->rect.y + offsety,
-						i - cc->comp->rect.x + offsetx,
-						cvScalar(0));
+						cvSet2D(letter,
+							j - cc->comp->rect.y + offsety,
+							i - cc->comp->rect.x + offsetx,
+							cvScalar(0));
 					}
 				}
 			}
@@ -203,19 +235,19 @@ int main(int argc, char *argv[])
 		cvSaveImage((filename+to_string(i+1)+".bmp").c_str(), letters[i]);
 
 
-    //if(!cvSaveImage(filenameOUT.c_str(),grayThresh)){
-    //    cout << "WARNING: Pic can't be saved" <<endl;
-    //    exit(2);
-    //}
-    //cout << filenameOUT << " successfully written" << endl;
+	//if(!cvSaveImage("testOUT.bmp".c_str(),grayThresh)){
+	//    cout << "WARNING: Pic can't be saved" <<endl;
+	//    exit(2);
+	//}
+	//cout << "testOUT.bmp" << " successfully written" << endl;
 
 	//cvWaitKey(0);
-    cvReleaseImage( &grayThresh );
+	cvReleaseImage( &grayThresh );
 	cvReleaseImage( &srcImg );
 
 	//system("pause");
 
-    return 0;
+	return 0;
 
 
 }

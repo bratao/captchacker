@@ -43,3 +43,53 @@ model_WITH_CAPTCHA_DATA_C=10000_KERNEL=1.svm	97.0%
 model_WITH_CAPTCHA_DATA_C=10000_KERNEL=2.svm	97.0%
 
 model_WITH_CAPTCHA_DATA_C=1000_KERNEL=1.svm	97.9797979798%
+
+
+############################
+Training set:	496 captchas
+Test set :		108 captchas
+############################
+captcha_based_TR=496_TEST=108_C=1_KERNEL=1.svm	90.7407407407%
+captcha_based_TR=496_TEST=108_C=1_KERNEL=2.svm	89.8148148148%
+captcha_based_TR=496_TEST=108_C=100_KERNEL=1.svm	98.1481481481%
+captcha_based_TR=496_TEST=108_C=100_KERNEL=2.svm	97.2222222222%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1.svm	98.1481481481%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=2.svm	97.2222222222%
+captcha_based_TR=496_TEST=108_C=5000_KERNEL=1.svm	98.1481481481%
+captcha_based_TR=496_TEST=108_C=5000_KERNEL=2.svm	97.2222222222%
+captcha_based_TR=496_TEST=108_C=10000_KERNEL=1.svm	98.1481481481%
+captcha_based_TR=496_TEST=108_C=10000_KERNEL=2.svm	97.2222222222%
+
+
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1.svm	97.9797979798%
+
+
+
+
+########################################
+#TEST de gamma pour un noyau polynomial#
+########################################
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_GAMMA=0.001.svm	97.9797979798%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_GAMMA=0.002.svm	97.9797979798%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_GAMMA=0.0025.svm	97.9797979798%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_GAMMA=0.003.svm	97.9797979798%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_GAMMA=0.004.svm	97.9797979798%
+
+
+########################################
+#TEST du degré pour un noyau polynomial#
+########################################
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_DEGREE=1.svm	96.9696969697%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_DEGREE=2.svm	95.9595959596%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_DEGREE=3.svm	97.9797979798%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_DEGREE=4.svm	97.9797979798%
+captcha_based_TR=496_TEST=108_C=1000_KERNEL=1_DEGREE=5.svm	97.9797979798%
+
+
+
+############### AVEC RAJOUT DE CAPTCHAS LABELES AUTOMATIQUEMENT #############
+Training set:	576 captchas
+Test set :		143 captchas
+##############################################################################
+captcha_based_TR=576_TEST=143_C=1000_KERNEL=2.svm	97.9020979021%
+captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm	99.3006993007%

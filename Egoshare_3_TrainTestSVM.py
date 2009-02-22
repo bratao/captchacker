@@ -5,18 +5,17 @@ import os
 import time
 
 CRANGE = [1000]
-KERNEL_TYPE = [POLY]
+KERNEL_TYPE = [RBF, POLY]
 
 
 for C in CRANGE:
     for KERNEL in KERNEL_TYPE:
-        
         #TRAINING_FOLDER = 'Egoshare/DBTraining'
         TRAINING_FOLDER = 'Egoshare/DBTraining-Simulation_based'
         TEST_FOLDER = 'Egoshare/DBTest'
         VERBOSE = 0
         MODEL_FOLDER = 'Egoshare/Models'
-        MODEL_FILE = "model_WITH_CAPTCHA_DATA_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
+        MODEL_FILE = "captcha_based_TR=576_TEST=143_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
         GENERATE_ANYWAY = 1
 
         #Génération du modèle

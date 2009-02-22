@@ -47,6 +47,7 @@ if not os.path.isfile(os.path.join(MODEL_FOLDER, MODEL_FILE)) or GENERATE_ANYWAY
 
     #param = svm_parameter(C = 10,nr_weight = 2,weight_label = [1,0],weight = [10,1], probability=1)
     param = svm_parameter(kernel_type = KERNEL, C=C, probability = 1)
+    
 
     #kernels : LINEAR, POLY, RBF, and SIGMOID
     #types : C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, and NU_SVR
