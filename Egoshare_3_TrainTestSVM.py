@@ -23,7 +23,9 @@ if GENERATE_CAPTCHA_BASED_MODELS:
             MODEL_FILE = "captcha_based_TR=687_TEST=143_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
             #Génération du modèle
             execfile("Train & Test SVM.py")
-
+            #Test du modèle
+            execfile("Egoshare_5_Perf.py")
+            
 
 if GENERATE_SIMULATION_BASED_MODELS:
     CRANGE = [1000]
@@ -37,7 +39,5 @@ if GENERATE_SIMULATION_BASED_MODELS:
             MODEL_FILE = "simulation_based_TR=687_TEST=143_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
             #Génération du modèle
             execfile("Train & Test SVM.py")
-            #Test du modèle
-            execfile("Break_Egoshare_Captcha.py")
 
 raw_input()

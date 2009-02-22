@@ -99,3 +99,12 @@ captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm	97.9020979021%
 
 captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm	99.3006993007%
 model_WITH_CAPTCHA_DATA_C=1000_KERNEL=1.svm	100.0%
+
+
+
+############### AVEC RAJOUT DE CAPTCHAS LABELES AUTOMATIQUEMENT #############
+Training set:	687 captchas
+Test set :		143 captchas
+##############################################################################
+captcha_based_TR=687_TEST=143_C=1000_KERNEL=2.svm	100.0%
+captcha_based_TR=687_TEST=143_C=1000_KERNEL=1.svm	100.0%

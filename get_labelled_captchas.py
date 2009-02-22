@@ -1,7 +1,7 @@
 #!coding: utf-8
 import os
 
-MODEL_FILE = "Egoshare/Models/captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm"
+MODEL_FILE = "Egoshare/Models/captcha_based_TR=687_TEST=143_C=1000_KERNEL=1.svm"
 
 TRAINING_FOLDER = "Egoshare/Labelled Catpchas Training"
 TEST_FOLDER = "Egoshare/Labelled Catpchas Test"
