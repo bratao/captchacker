@@ -5,12 +5,12 @@ from Break_Egoshare_Captcha import *
 import shutil
 
 
-CAPTCHA_BASED = True # using captchas from the website
-SIMULATION_BASED = False # using simulated captchas with various fonts
+CAPTCHA_BASED = False # using captchas from the website
+SIMULATION_BASED = True # using simulated captchas with various fonts
 
 
 if SIMULATION_BASED:
-    DEFAULT_SIZE = (20, 20)
+    DEFAULT_SIZE = (30, 30)
     GENERATE_TRAINING_SET = True
     GENERATE_VALIDATION_SET = True
 
