@@ -93,3 +93,6 @@ Test set :		143 captchas
 ##############################################################################
 captcha_based_TR=576_TEST=143_C=1000_KERNEL=2.svm	97.9020979021%
 captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm	99.3006993007%
+captcha_based_TR=576_TEST=143_C=1000_KERNEL=2.svm	97.2027972028%
+captcha_based_TR=576_TEST=143_C=1000_KERNEL=2.svm	97.2027972028%
+captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm	97.9020979021%
