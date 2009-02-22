@@ -12,7 +12,7 @@ MODEL_FOLDER = 'Egoshare/Models'
 
 
 if GENERATE_CAPTCHA_BASED_MODELS:
-    CRANGE = [100, 1000, 10000]
+    CRANGE = [1000]
     KERNEL_TYPE = [RBF, POLY]
     TRAINING_FOLDER = 'Egoshare/DBTraining-Captcha_based'
     TEST_FOLDER = 'Egoshare/DBTest-Captcha_based'
@@ -20,7 +20,7 @@ if GENERATE_CAPTCHA_BASED_MODELS:
 
     for C in CRANGE:
         for KERNEL in KERNEL_TYPE:
-            MODEL_FILE = "captcha_based_TR=1018_TEST=348_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
+            MODEL_FILE = "captcha_based_TR=1896_TEST=714_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
             #Génération du modèle
             execfile("Train & Test SVM.py")
             #Test du modèle

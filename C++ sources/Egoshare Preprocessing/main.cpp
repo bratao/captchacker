@@ -79,108 +79,123 @@ int main(int argc, char *argv[])
 	int threshold = 150, maxValue = 255;
 	int thresholdType = CV_THRESH_BINARY;
 
-	IplImage *srcImg=0, *grayThresh=0, *gray=0;
+	IplImage *srcImg=0, *grayThresh=0, *gray4=0, *gray8=0;
 	srcImg = cvLoadImage(filenameIN.c_str(),1);
 
 	grayThresh = cvCreateImage( cvSize(srcImg->width, srcImg->height), IPL_DEPTH_8U, 1 );
 	cvCvtColor(srcImg, grayThresh, CV_BGR2GRAY );
 	cvThreshold(grayThresh, grayThresh, threshold, maxValue, thresholdType);
 
+	int connectivity, size;
+
 	//On commence par chercher les composantes 8-connexes
-	int connectivity = 4;
+	connectivity = 4;
+	std::vector<CC*> CCs4;
+
+
+	gray4 = cvCloneImage(grayThresh);
+
+	//Sélection de toutes les composantes connexes en noir
+	for (int i=0; i<gray4->width; ++i)
+	{
+		for (int j=0; j<gray4->height; ++j)
+		{
+			if (cvGet2D(gray4, j, i).val[0] == 0)
+			{
+				CvConnectedComp *comp = new CvConnectedComp;
+
+				IplImage *mask = cvCreateImage(cvSize(gray4->width+2, gray4->height+2), IPL_DEPTH_8U, 1);
+				cvZero(mask);
+
+				cvFloodFill(gray4, cvPoint(i,j), cvScalar(128),cvScalarAll(0),cvScalarAll(0),comp, connectivity, mask);
+
+				CC *cc = new CC;
+				cc->mask = mask;
+				cc->comp = comp;
+				CCs4.push_back(cc);
+			}
+		}
+	}
+
+	//cout << CCs4.size() << " connected 4-components found." << endl;
+
+	//Tri décroissant selon l'aire des composantes connexes
+	qsort(&CCs4[0], CCs4.size(), sizeof(CCs4[0]), func_compare_area_cc);
+
+	//On ne garde que 3 composantes connexes
+	size = CCs4.size();
+	for (int i=3; i<size; ++i)
+		CCs4.pop_back();
+
+
+
+
+	//On commence par chercher les composantes 8-connexes
+	connectivity = 8;
+	std::vector<CC*> CCs8;
+
+	gray8 = cvCloneImage(grayThresh);
+
+	//Sélection de toutes les composantes connexes en noir
+	for (int i=0; i<gray8->width; ++i)
+	{
+		for (int j=0; j<gray8->height; ++j)
+		{
+			if (cvGet2D(gray8, j, i).val[0] == 0)
+			{
+				CvConnectedComp *comp = new CvConnectedComp;
+
+				IplImage *mask = cvCreateImage(cvSize(gray8->width+2, gray8->height+2), IPL_DEPTH_8U, 1);
+				cvZero(mask);
+
+				cvFloodFill(gray8, cvPoint(i,j), cvScalar(128),cvScalarAll(0),cvScalarAll(0),comp, connectivity, mask);
+
+				CC *cc = new CC;
+				cc->mask = mask;
+				cc->comp = comp;
+				CCs8.push_back(cc);
+			}
+		}
+	}
+
+	//cout << CCs8.size() << " connected 8-components found." << endl;
+
+	//Tri décroissant selon l'aire des composantes connexes
+	qsort(&CCs8[0], CCs8.size(), sizeof(CCs8[0]), func_compare_area_cc);
+
+	//On ne garde que 3 composantes connexes
+	size = CCs8.size();
+	for (int i=3; i<size; ++i)
+		CCs8.pop_back();
+
+
+
 	std::vector<CC*> CCs;
 
-	while (1)
+	if (CCs8.size() < 3)
 	{
-		gray = cvCloneImage(grayThresh);
-
-		//Sélection de toutes les composantes connexes en noir
-		CCs.clear();
-		for (int i=0; i<gray->width; ++i)
+		CCs = CCs4;
+		//cout << "4" << endl;
+	}
+	else
+	{
+		//Si une des composantes 4-connexes est un fragment de caractère,
+		//on cherche les composantes 8-connexes
+		if (CCs4[2]->comp->area < 30)
 		{
-			for (int j=0; j<gray->height; ++j)
-			{
-				if (cvGet2D(gray, j, i).val[0] == 0)
-				{
-					CvConnectedComp *comp = new CvConnectedComp;
-
-					IplImage *mask = cvCreateImage(cvSize(gray->width+2, gray->height+2), IPL_DEPTH_8U, 1);
-					cvZero(mask);
-
-					cvFloodFill(gray, cvPoint(i,j), cvScalar(128),cvScalarAll(0),cvScalarAll(0),comp, connectivity, mask);
-
-					CC *cc = new CC;
-					cc->mask = mask;
-					cc->comp = comp;
-					CCs.push_back(cc);
-				}
-			}
+			CCs = CCs8;
+			//cout << "8" << endl;
 		}
-
-		//cout << CCs.size() << " connected components found." << endl;
-
-
-		//cout << "BEFORE" << endl;
-		//for (int i=0; i<CCs.size(); ++i)
-		//	cout << CCs[i]->comp->area << " ";
-		//cout << endl;
-		//Tri décroissant selon l'aire des composantes connexes
-		qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_area_cc);
-
-		//cout << "AFTER AREA SORT" << endl;
-		//for (int i=0; i<CCs.size(); ++i)
-		//	cout << CCs[i]->comp->area << " ";
-		//cout << endl;
-
-		//On ne garde que 3 composantes connexes
-		int size = CCs.size();
-		for (int i=3; i<size; ++i)
-			CCs.pop_back();
-
-		if (connectivity == 4)
+		else
 		{
-			//Si une des composantes 4-connexes est un fragment de caractère,
-			//on cherche les composantes 8-connexes
-			if (CCs[2]->comp->area < 30)
-			{
-				connectivity = 8;
-				continue;
-			}
+			CCs = CCs4;
+			//cout << "4" << endl;
 		}
-
-
-		//cout << "AFTER POP" << endl;
-		//for (int i=0; i<CCs.size(); ++i)
-		//	cout << CCs[i]->comp->area << " ";
-		//cout << endl;
-
-		//cout << "BEFORE POS SORT" << endl;
-		//for (int i=0; i<CCs.size(); ++i)
-		//	cout << CCs[i]->comp->rect.x << " ";
-		//cout << endl;
-
-		//Tri croissant selon l'abscisse de la composante connexe
-		qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_pos_cc);
-
-		//cout << "AFTER POS SORT" << endl;
-		//for (int i=0; i<CCs.size(); ++i)
-		//	cout << CCs[i]->comp->rect.x << " ";
-		//cout << endl;
-
-		break;
-
-
 	}
 
 
-
-
-
-
-
-
-
-
+	//Tri croissant selon l'abscisse de la composante connexe
+	qsort(&CCs[0], CCs.size(), sizeof(CCs[0]), func_compare_pos_cc);
 
 
 
