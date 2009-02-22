@@ -120,9 +120,9 @@ def Generate_Captcha_Based_set(CAPTCHA_SOURCE_FOLDER,DEST_FOLDER):
 
 
 if CAPTCHA_BASED:
-    GENERATE_TRAINING_SET = True  # using hand-labelled captchas
+    GENERATE_TRAINING_SET = False   # using hand-labelled captchas
     GENERATE_VALIDATION_SET = True # using hand-labelled captchas
-    GENERATE_COMPUTER_LABELLED_SET = True
+    GENERATE_COMPUTER_LABELLED_SET = False
 
     if GENERATE_TRAINING_SET:
         print """
@@ -186,3 +186,4 @@ if CAPTCHA_BASED:
         """
 
 
+    raw_input()

@@ -48,13 +48,8 @@ def preprocess_captcha_part(file, folder=".", parent = None, remove=True):
     else:
         print "OS type non supported"
         exit(2)
-
     os.system(command)
     
-    if remove:
-        os.remove("letter1.bmp")
-        os.remove("letter2.bmp")
-        os.remove("letter3.bmp")
 
     letter1 = Image.open(os.path.join(os.getcwd(), "letter1.bmp")).copy()
     letter1_algo = letter1.point(lambda i: (i/255.))
@@ -65,6 +60,10 @@ def preprocess_captcha_part(file, folder=".", parent = None, remove=True):
     letter3 = Image.open(os.path.join(os.getcwd(), "letter3.bmp")).copy()
     letter3_algo = letter3.point(lambda i: (i/255.))
     
+    if remove:
+        os.remove("letter1.bmp")
+        os.remove("letter2.bmp")
+        os.remove("letter3.bmp")
 
     if parent:
         w, h = letter1.size

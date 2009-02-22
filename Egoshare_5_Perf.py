@@ -2,18 +2,19 @@
 from Break_Egoshare_Captcha import *
 
 MODEL_FOLDER = 'Egoshare/Models'
-MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
+MODEL_FILES = ['captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm',
+               'model_WITH_CAPTCHA_DATA_C=1000_KERNEL=1.svm']
 LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas Test'
 
 try:
     print MODEL_FILE
 except:
-    MODEL_FILES = ['model_C=1000_KERNEL=2.svm']
+    pass
 else:
     MODEL_FILES = [MODEL_FILE]
 
-for file in MODEL_FILES:
-    model = load_model(os.path.join(MODEL_FOLDER, file))
+for MODEL_FILE in MODEL_FILES:
+    model = load_model(os.path.join(MODEL_FOLDER, MODEL_FILE))
     
     nbs = 0
     errors = 0
