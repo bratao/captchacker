@@ -1,5 +1,5 @@
 #!coding: utf-8
-import os
+import os, time
 
 MODEL_FILE = "Egoshare/Models/captcha_based_TR=687_TEST=143_C=1000_KERNEL=1.svm"
 
@@ -13,7 +13,7 @@ from Break_Egoshare_Captcha import load_model, preprocess_captcha_part, break_ca
 model = load_model(MODEL_FILE)
 print
 
-for i in range(100):
+for i in range(1000):
     file = save_image(path = os.path.join(DEST_FOLDER, "0"))
     
     letter1_algo, letter2_algo, letter3_algo = preprocess_captcha_part(file)
@@ -29,5 +29,7 @@ for i in range(100):
 
     os.rename(file, os.path.join(DEST_FOLDER, new_filename))
     print new_filename
+    
+    time.sleep(1)
     
 raw_input()

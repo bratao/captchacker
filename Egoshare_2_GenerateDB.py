@@ -88,7 +88,10 @@ def Prepare_Dest_Folder(DEST_FOLDER):
         if subdir[0] != ".": # to prevent removal of .svn folders !
             for file in os.listdir(os.path.join(DEST_FOLDER, subdir)):
                 os.remove(os.path.join(DEST_FOLDER, subdir, file))
-            os.rmdir(os.path.join(DEST_FOLDER, subdir))
+            try:
+                os.rmdir(os.path.join(DEST_FOLDER, subdir))
+            except Exception, ex:
+                print "Impossible de supprimer le dossier", os.path.join(DEST_FOLDER, subdir), "..."
     print "Done..."
             
     #Création des sous-dossiers
@@ -154,7 +157,7 @@ if CAPTCHA_BASED:
         DEST_FOLDER = "Egoshare/Computer Labelled Captcha based set"
         CAPTCHA_SOURCE_FOLDER = "Egoshare/Rough Captchas"
 
-        MODEL_FILE = 'Egoshare/Models/captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm'
+        MODEL_FILE = 'Egoshare/Models/captcha_based_TR=687_TEST=143_C=1000_KERNEL=1.svm'
         model = load_model(MODEL_FILE)
 
         Prepare_Dest_Folder(DEST_FOLDER)
