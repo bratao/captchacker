@@ -2,9 +2,7 @@
 from Break_Egoshare_Captcha import *
 
 MODEL_FOLDER = 'Egoshare/Models'
-MODEL_FILES = ['captcha_based_TR=687_TEST=143_C=1000_KERNEL=1.svm',
-               'captcha_based_TR=687_TEST=143_C=1000_KERNEL=2.svm',
-               'captcha_based_TR=576_TEST=143_C=1000_KERNEL=1.svm']
+MODEL_FILES = ['simulation_based_C=1000_KERNEL=1.svm']
 LABELED_CAPTCHAS_FOLDER = 'Egoshare/Labelled Catpchas Test'
 
 try:

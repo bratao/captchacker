@@ -145,3 +145,9 @@ Test set :		714 captchas
 ##############################################################################
 captcha_based_TR=1896_TEST=714_C=1000_KERNEL=2.svm	99.1596638655%
 captcha_based_TR=1896_TEST=714_C=1000_KERNEL=1.svm	99.1596638655%
+
+#############################################
+SIMULATION-BASED avec centrage des caractères
+#############################################
+simulation_based_C=1000_KERNEL=2.svm	72.8291316527%
+simulation_based_C=1000_KERNEL=1.svm	73.6694677871%
