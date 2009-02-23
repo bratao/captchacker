@@ -5,8 +5,8 @@ import os
 import time
 
 
-GENERATE_CAPTCHA_BASED_MODELS = True
-GENERATE_SIMULATION_BASED_MODELS = False
+GENERATE_CAPTCHA_BASED_MODELS = False
+GENERATE_SIMULATION_BASED_MODELS = True
 VERBOSE = 0
 MODEL_FOLDER = 'Egoshare/Models'
 
@@ -24,7 +24,7 @@ if GENERATE_CAPTCHA_BASED_MODELS:
             #Génération du modèle
             execfile("Train & Test SVM.py")
             #Test du modèle
-            execfile("Egoshare_5_Perf.py")
+            execfile("Egoshare_5_TestPerf.py")
             
 
 if GENERATE_SIMULATION_BASED_MODELS:
@@ -36,8 +36,10 @@ if GENERATE_SIMULATION_BASED_MODELS:
 
     for C in CRANGE:
         for KERNEL in KERNEL_TYPE:
-            MODEL_FILE = "simulation_based_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
+            MODEL_FILE = "simulation_based_NEW_C="+str(C)+"_KERNEL="+str(KERNEL)+".svm"
             #Génération du modèle
             execfile("Train & Test SVM.py")
-
+            #Test du modèle
+            execfile("Egoshare_5_TestPerf.py")
+            
 raw_input()

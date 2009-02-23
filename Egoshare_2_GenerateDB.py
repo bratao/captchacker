@@ -12,7 +12,7 @@ SIMULATION_BASED = True # using simulated captchas with various fonts
 if SIMULATION_BASED:
     DEFAULT_SIZE = (30, 30)
     GENERATE_TRAINING_SET = True
-    GENERATE_VALIDATION_SET = True
+    GENERATE_VALIDATION_SET = False
 
     if GENERATE_TRAINING_SET:
         print """
@@ -35,13 +35,12 @@ if SIMULATION_BASED:
         SCALE_MIN = 17
         SCALE_MAX = 22
         STEP = 1
-        ALIGN_RANGEY = [0.7]
+        ALIGN_RANGEY = [0.5]
         ALIGN_RANGEX = [0.5]
-        SEUIL_RANGE = [160, 180, 200]
-        ROTATIONS = [2, 4, 6, 9, 13, 17, 20, 22, 25, 27]
-        FONTS = [("Fonts/comic.ttf", (140, 160)),
+        ROTATIONS = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
+        FONTS = [("Fonts/comic.ttf", (145, 163)),
                  ("Fonts/vera.ttf", (160, 180)),
-                 ("Fonts/califb.ttf", (160, 180))]
+                 ("Fonts/califb.ttf", (171, 191))]
         Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,
                      DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE, ROTATIONS)
 
