@@ -151,3 +151,5 @@ SIMULATION-BASED avec centrage des caractères
 #############################################
 simulation_based_C=1000_KERNEL=2.svm	72.8291316527%
 simulation_based_C=1000_KERNEL=1.svm	73.6694677871%
+simulation_based_C=1000_KERNEL=1.svm	73.6694677871%
+simulation_based_C=1000_KERNEL=1.svm	73.6694677871%
