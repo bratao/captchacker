@@ -9,8 +9,7 @@ HEIGHT = 20
 TRAINING_FOLDER = "Egoshare/DBTraining-Simulation_based"
 
 for folder, subfolders, files in os.walk(TRAINING_FOLDER):
-    loaded = False
-
+    
     print folder
         
     if os.name == "nt":

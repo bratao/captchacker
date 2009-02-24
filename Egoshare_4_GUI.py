@@ -254,7 +254,7 @@ class MyFrame(wx.Frame):
             return
         if not self.model_selected:
             wx.MessageBox("Selectionner le modele SVM !", "Donnee manquante")
-            #return
+            return
         
         thread.start_new_thread(Break_Egoshare_Captcha.break_captcha,
                                 (self.model, self.letter1_algo, self.letter2_algo, self.letter3_algo, self))
@@ -272,7 +272,12 @@ class MyFrame(wx.Frame):
         
         if retour == wx.ID_OK and fichier != "":
             self.model = Break_Egoshare_Captcha.load_model(self.chemin, self, fichier)
-        self.Update()
+            self.Update()
+            
+            if self.captcha_selected and self.model_selected:
+                #Lancement du calcul
+                self.OnLaunch(None)
+
         
         
         
@@ -292,7 +297,16 @@ class MyFrame(wx.Frame):
             self.setThumbs(self.letter1, self.letter2, self.letter3)
             self.captcha_selected = True
             self.setResults("", "", "", "", "", "")
-        self.Update()
+            
+            self.Update()
+
+            if self.captcha_selected and self.model_selected:
+                #Lancement du calcul
+                self.OnLaunch(None)
+
+        
+
+
 ###############################################################################
 ###############################################################################
 
