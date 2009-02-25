@@ -6,6 +6,13 @@
 #include "cxcore.h"
 #include "highgui.h"
 
+#if defined (WIN32)
+#pragma comment(lib,"cv")
+#pragma comment(lib,"cvaux")
+#pragma comment(lib,"cxcore")
+#pragma comment(lib,"highgui")
+#pragma comment(lib,"cvcam")
+#endif
 
 using namespace std;
 using namespace boost::filesystem;
