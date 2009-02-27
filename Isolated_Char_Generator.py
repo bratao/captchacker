@@ -61,7 +61,10 @@ def Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,
                 if subdir[0] != ".": # to prevent removal of .svn folders !
                     for file in os.listdir(os.path.join(DESTINATION_FOLDER, subdir)):
                         os.remove(os.path.join(DESTINATION_FOLDER, subdir, file))
-                    os.rmdir(os.path.join(DESTINATION_FOLDER, subdir))
+                    try:
+                        os.rmdir(os.path.join(DESTINATION_FOLDER, subdir))
+                    except:
+                        print "Impossible de supprimer le dossier", os.path.join(DESTINATION_FOLDER, subdir), "..."
             print "Done..."
     
     for elem in elem_to_gen:

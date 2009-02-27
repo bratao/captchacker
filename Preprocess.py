@@ -3,7 +3,7 @@ import os, Image, ImageStat
 
 SEUIL = 180
 
-def preprocess_captcha(path):
+def preprocess_captcha(path, parent):
 
     if not os.path.isfile(path):
         print "FICHIER INEXISTANT"
@@ -24,6 +24,18 @@ def preprocess_captcha(path):
                 val = 255
             im.putpixel((i,j), val)
 
+    #Si parent=None, on enlève le blanc sur les cotés
+    minx=100000
+    maxx=0
+    for i in xrange(w):
+        for j in xrange(h):
+            if im.getpixel((i,j)) == 0:
+                if i<minx:
+                    minx=i
+                if i>maxx:
+                    maxx=i
+    
+    im = im.crop((minx, 0, maxx, 31))
 
     DEST = path[:-4]+".bmp"
     im.save(DEST)

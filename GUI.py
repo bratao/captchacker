@@ -12,6 +12,8 @@ import  wx.lib.newevent
 import Break_Captcha_util
 
 
+WIDTH=31
+
 class MyFrame(wx.Frame):
     
     def __init__(self, zoom):
@@ -19,7 +21,7 @@ class MyFrame(wx.Frame):
         self.model = 1
         wx.Frame.__init__(self, None, -1, "Captcha Breaker", size=(600, 420))
 
-        taille = (38*zoom,31*zoom)
+        taille = (WIDTH*zoom,31*zoom)
         self.image_input_window = wx.StaticBitmap(self, -1, size = taille, bitmap = wx.EmptyBitmap(*taille))
         self.image_input_window.SetMinSize(taille)
         
@@ -79,8 +81,8 @@ class MyFrame(wx.Frame):
         self.sizer_width = wx.FlexGridSizer(rows = 1)
         self.text_width = wx.StaticText(self, -1, "Largeur de fenetre")
         self.text_width.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.BOLD))
-        self.width_picker = wx.SpinCtrl(self, size = (50, -1), max=38)
-        self.width_picker.SetValue(20)
+        self.width_picker = wx.SpinCtrl(self, size = (50, -1), max=WIDTH)
+        self.width_picker.SetValue(16)
         self.sizer_width.Add(self.text_width, flag = wx.ALIGN_CENTER | wx.RIGHT, border = 12)
         self.sizer_width.Add(self.width_picker, flag = wx.ALIGN_CENTER)
         

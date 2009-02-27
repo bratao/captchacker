@@ -158,3 +158,21 @@ Avec plus de rotations:
 simulation_based_NEW_C=1000_KERNEL=2.svm	76.0504201681%
 simulation_based_NEW_C=1000_KERNEL=1.svm	77.4509803922%
 
+simulation_based_NEW_C=1000_KERNEL=2.svm	74.2296918768%
+
+
+#############################################
+  POUR LE RAPPORT SIMULATION-BASED (1116 images / character):
+#############################################
+simulation_based_NEW_C=1000_KERNEL=2.svm	78.2913165266%
+simulation_based_NEW_C=1000_KERNEL=1.svm	78.2913165266%
+simulation_based_NEW_C=1000_KERNEL=0.svm	74.649859944%
+simulation_based_NEW_C=1000_KERNEL=3.svm	71.7086834734%
+
+#############################################
+  POUR LE RAPPORT CAPTCHA-BASED (1896 captchas used):
+#############################################
+captcha_based_TR=1896_TEST=714_C=1000_KERNEL=2.svm	99.1596638655%
+captcha_based_TR=1896_TEST=714_C=1000_KERNEL=1.svm	99.1596638655%
+captcha_based_TR=1896_TEST=714_C=1000_KERNEL=0.svm	99.0196078431%
+captcha_based_TR=1896_TEST=714_C=1000_KERNEL=3.svm	97.7591036415%

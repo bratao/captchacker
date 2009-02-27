@@ -33,7 +33,7 @@ if SIMULATION_BASED:
         DISTORTION_H_MIN = 0
         DISTORTION_H_MAX = 1
         SCALE_MIN = 17
-        SCALE_MAX = 22
+        SCALE_MAX = 23
         STEP = 1
         ALIGN_RANGEY = [0.5]
         ALIGN_RANGEX = [0.5]

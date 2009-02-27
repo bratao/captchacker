@@ -2,14 +2,13 @@
 import psyco
 from Isolated_Char_Generator import *
 
-DEFAULT_SIZE = (38, 31)
-SEUIL = 200
+DEFAULT_SIZE = (40, 40)
 
 GENERATE_TRAINING_SET = True
-GENERATE_VALIDATION_SET = True
+GENERATE_VALIDATION_SET = False
 
-FONTS = [("Fonts/califb.ttf", (180, 200)),
-         ("Fonts/vera.ttf", (180, 200))]
+FONTS = [("Fonts/califb.ttf", (200,)),
+         ("Fonts/vera.ttf", (195,))]
 
 
 if GENERATE_TRAINING_SET:
@@ -23,7 +22,7 @@ if GENERATE_TRAINING_SET:
     #GENERATE_DIGITS = True
     #elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
     
-    elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
+    #elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
     elem_to_gen=['A', 'B', 'D', 'E', 'M', 'T', '2', '3']
     
     DESTINATION_FOLDER = 'Hotmail/DBTraining'
@@ -33,9 +32,9 @@ if GENERATE_TRAINING_SET:
     DISTORTION_H_MIN = 0
     DISTORTION_H_MAX = 7
     SCALE_MIN = 25
-    SCALE_MAX = 31
+    SCALE_MAX = 30
     STEP = 1
-    ALIGN_RANGEY = [0.1, 0.5, 0.9]
+    ALIGN_RANGEY = [0.5]
     ALIGN_RANGEX = [0.5]
     Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,
                  DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE)
@@ -52,7 +51,7 @@ if GENERATE_VALIDATION_SET:
     #GENERATE_DIGITS = True
     #elem_to_gen = Generate_Element_List(GENERATE_CAPITAL_LETTERS, GENERATE_DIGITS)
     
-    elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
+    #elem_to_gen=['A', 'B', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'T', '2', '3']
     elem_to_gen = ['A', 'B', 'D', 'E', 'M', 'T', '2', '3']
     
     DESTINATION_FOLDER = 'Hotmail/DBTest'

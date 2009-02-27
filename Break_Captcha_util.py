@@ -35,7 +35,7 @@ def load_model(chemin, parent=None, fichier = ""):
 def preprocess_captcha_part(file, parent = None):
     #Fait l'extraction à  partir de la starting position, sur une largeur length, et fait éventuellement du preprocessing.
     
-    dest = preprocess_captcha(file)
+    dest = preprocess_captcha(file, None)
     
     data = Image.open(dest)
     data1 = data.point(lambda i: i /255.)
@@ -48,13 +48,15 @@ def preprocess_captcha_part(file, parent = None):
     
     
 
-def predict(model, im, liste_probas):
+def predict(model, im, liste_probas=None):
     data = list(im.getdata())
     prediction = model.predict(data)
     probability = model.predict_probability(data)  
     
     print chr(65+int(prediction)), max(probability[1].values())
-    liste_probas.append(probability[1])
+    
+    if liste_probas is not None:
+        liste_probas.append(probability[1])
     
     if VERBOSE:
         print probability
@@ -63,7 +65,7 @@ def predict(model, im, liste_probas):
     
     
     
-def break_captcha(model, captcha, size=38, parent = None, image=None):
+def break_captcha(model, captcha, size=38, parent = None, image=None, liste_scores=[], WIDTH=31):
     
     if not parent:
         print """
@@ -74,21 +76,17 @@ def break_captcha(model, captcha, size=38, parent = None, image=None):
 
     liste_probas = []
     
-    if parent:
-        w,h = image.GetSize()
+    w,h = captcha.size
     
-    for starting_pos in range(0, 127-31,STARTING_POSITION_STEP):
+    for starting_pos in range(0, w-size,STARTING_POSITION_STEP):
         if parent:
             if not parent.actif:
                 return
-        preprocessed_captcha_part = captcha.crop((starting_pos, 0, starting_pos+38, 31))
-        preprocessed_captcha_part.load()
-        
-        for j in range(preprocessed_captcha_part.size[1]):
-            for i in range((38-size)/2+1):
-                preprocessed_captcha_part.putpixel((i,j), 1)
-            for i in range(38 - (38-size)/2, 38):
-                preprocessed_captcha_part.putpixel((i,j), 1)
+            
+        preprocessed_captcha_part = captcha.crop((starting_pos, 0, starting_pos+size, 31))
+        im = Image.new('L', (WIDTH, 31), 1)
+        im.paste(preprocessed_captcha_part, ((WIDTH-size)/2, 0))
+        preprocessed_captcha_part = im
         
         if not TEST:
             prediction, max_score = predict(model, preprocessed_captcha_part, liste_probas)
@@ -100,25 +98,51 @@ def break_captcha(model, captcha, size=38, parent = None, image=None):
             preprocessed_captcha_part = preprocessed_captcha_part.point(lambda e : e*255).convert('RGB').resize((parent.zoom*w, parent.zoom*h))
             
             parent.setResult(preprocessed_captcha_part, prediction, int(max_score*10000000)/10000000.)
-            parent.SetRGB(starting_pos + 38/2, 31 - int(max_score*h))
+            parent.SetRGB(starting_pos + WIDTH/2, 31 - int(max_score*h))
             parent.SetGraphImage(image)
             
             time.sleep(0.5)
+        else:
+            #liste_scores.append((starting_pos + (38-size)/2+1, 0, max_score))
+            liste_scores.append((starting_pos + WIDTH - (WIDTH-size)/2, size, max_score))
+            
     if parent:
         parent.launchButton.SetLabel("Lancer le calcul")
 
 
 
+#TRACEBACK
+import traceback
+import sys
+def Myexcepthook(type, value, tb):
+        lines=traceback.format_exception(type, value, tb)
+        f=open('log.txt', 'a')
+        f.write("\n".join(lines))
+        f.close()
+sys.excepthook=Myexcepthook
+
+
+
 if __name__ == "__main__":
-    MODEL_FILE = "model.svm"
-    CAPTCHA_FILE = os.path.join("Captchas", 'Image011.jpg')
+    MODEL_FILE = "Hotmail/Models/model_c=100.svm"
+    CAPTCHA_FILE = os.path.join("Hotmail", "Rough Captchas", 'Image011.jpg')
     LENGTH_CAPTCHA_PART = 31
     
     if not TEST:
         model = load_model(MODEL_FILE)
     
+    liste_scores = []
+    
     captcha, beau_captcha = preprocess_captcha_part(CAPTCHA_FILE)
-    break_captcha(model, captcha, size=38)
+    for size in range(15, 30, 2):
+        print size
+        break_captcha(model, captcha, size, None, None, liste_scores)
+    
+    import pickle
+    f=open('scores.pck', 'w')
+    pickle.dump(liste_scores, f)
+    f.close()
+    
     raw_input()
 
 
