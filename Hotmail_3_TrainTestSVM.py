@@ -3,7 +3,7 @@
 TRAINING_FOLDER = 'Hotmail/DBTraining'
 TEST_FOLDER = 'Hotmail/DBTest'
 VERBOSE = 0
-MODEL_FILE = "model_31x31.svm"
+MODEL_FILE = "model_31x31_3DEMT_classes.svm"
 MODEL_FOLDER = "Hotmail/Models"
 GENERATE_ANYWAY = 1
 

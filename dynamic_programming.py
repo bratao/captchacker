@@ -1,4 +1,7 @@
+#!coding: utf-8
 import pickle
+import psyco
+psyco.full()
 
 #Chargement des scores sauvegardés
 f=open('scores.pck')
@@ -8,10 +11,33 @@ f.close()
 liste_scores.sort()
 
 #Max scores at ending point
+posmax = 0
+sizes = set([])
 d = {}
 for (pos, size, score, prediction) in liste_scores:
-    d[pos] = [0, []]
-d[0] = [0, []]
+    d[pos] = {0 : [[], [], 0],
+              1 : [[], [], 0],
+              2 : [[], [], 0],
+              3 : [[], [], 0],
+              4 : [[], [], 0],
+              5 : [[], [], 0],
+              6 : [[], [], 0]}
+    sizes.add(size)
+    if pos>posmax:
+        posmax=pos
+d[0] = {0 : [[], [], 0],
+      1 : [[], [], 0],
+      2 : [[], [], 0],
+      3 : [[], [], 0],
+      4 : [[], [], 0],
+      5 : [[], [], 0],
+      6 : [[], [], 0]}
+
+sizes = list(sizes)
+sizes.sort()
+
+sizemax = sizes[-1]
+
 
 for (pos, size, score, prediction) in liste_scores:
     #Pour mettre à jour le plus haut score, il faut que:
@@ -19,13 +45,49 @@ for (pos, size, score, prediction) in liste_scores:
     #- il y ait une entrée dans le dico correspondant au début de l'intervalle considéré (LES INTERVALLES SE TOUCHENT)
     #- l'intervalle considéré
     
-    if d.has_key(pos-size):
-        cand = d[pos-size][0] + score
+    #print "position considérée", pos
+    
 
-        if cand > d[pos][0]:
-            if len(d[pos-size][1]) < 6:
-                d[pos][0] = cand
-                d[pos][1] = d[pos-size][1]+[prediction]
+    if d.has_key(pos-size+1):
+        #Trajectoires précédentes
+        precedent = d[pos-size+1]
         
+        #Rajout de la trajectoire considéré à la précédente
+        for [sommets, predicts, old_score] in precedent.values():
+            path_length_old = len(predicts)
+            
+            #print 'path_length_old: ', path_length_old
+            if path_length_old < 6:
+                if d[pos][path_length_old+1][2] < old_score + score:
+                    d[pos][path_length_old+1] = [sommets+[pos], predicts+[prediction], old_score+score]
+        
+##        print "append at ", pos,
+##        raw_input()
+
+        
+        del precedent
 
 
+print d[posmax][6]
+
+
+
+##VRAIE COUPE
+aretes_good = [0, 10, 28, 37, 48, 78, 88]
+
+l=[]
+
+aretes_good = [(0,9), (10,27), (28,37), (38,48), (49,78), (79,86)]
+
+
+SCORE = 0
+pred = ""
+for beg, fin in aretes_good:
+    print [(pos, size, score, prediction) for (pos, size, score, prediction) in liste_scores if pos == fin and pos-size==beg]
+    [(pos, size, score, prediction)] = [(pos, size, score, prediction) for (pos, size, score, prediction) in liste_scores if pos == fin and pos-size==beg]
+    print prediction, score
+    SCORE += score
+    pred += prediction
+
+print "SCORE: ", SCORE
+print "prediction: ", pred

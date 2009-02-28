@@ -84,9 +84,26 @@ def break_captcha(model, captcha, size=38, parent = None, image=None, liste_scor
                 return
             
         preprocessed_captcha_part = captcha.crop((starting_pos, 0, starting_pos+size, 31))
+
+
+        #Si parent=None, on enlève le blanc sur les cotés
+        miny=100000
+        maxy=0
+        for i in xrange(size):
+            for j in xrange(31):
+                if preprocessed_captcha_part.getpixel((i,j)) == 0:
+                    if j<miny:
+                        miny=j
+                    if j>maxy:
+                        maxy=j        
+        preprocessed_captcha_part = preprocessed_captcha_part.crop((0, miny, size, maxy+1))
+        sizei = maxy-miny+1
+
+
         im = Image.new('L', (WIDTH, 31), 1)
-        im.paste(preprocessed_captcha_part, ((WIDTH-size)/2, 0))
+        im.paste(preprocessed_captcha_part, ((WIDTH-size)/2, (31 - sizei)/2))
         preprocessed_captcha_part = im
+        #preprocessed_captcha_part.point(lambda e : e*255).show()
         
         if not TEST:
             prediction, max_score = predict(model, preprocessed_captcha_part, liste_probas)
