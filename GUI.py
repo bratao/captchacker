@@ -10,6 +10,7 @@ import  wx.lib.newevent
 
 
 import Break_Captcha_util
+import Hotmail_5_ComputeScores
 
 
 WIDTH=31
@@ -33,14 +34,16 @@ class MyFrame(wx.Frame):
         self.text_score.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.BOLD))
         self.score = wx.StaticText(self, -1)
         self.score.SetFont(wx.Font(9, wx.ROMAN, wx.NORMAL, wx.NORMAL))
+
+        self.res = wx.StaticText(self, -1)
+        self.res.SetFont(wx.Font(11, wx.ROMAN, wx.NORMAL, wx.NORMAL))
         
         self.main_sizer = wx.GridBagSizer()
-        self.main_sizer.Add(self.image_input_window, (1,1), span = (2,1), flag=wx.ALIGN_CENTER | wx.ALL, border=20)
+        self.main_sizer.Add(self.image_input_window, (1,1), span = (2,1), flag=wx.ALIGN_CENTER | wx.ALL, border=5)
         self.main_sizer.Add(self.text_resultat, (1,2), flag=wx.ALIGN_CENTER | wx.ALL, border=5)
         self.main_sizer.Add(self.resultat, (1,3), flag=wx.ALIGN_CENTER | wx.ALL, border=0)
         self.main_sizer.Add(self.text_score, (2,2), flag=wx.ALIGN_CENTER | wx.ALL, border=5)
         self.main_sizer.Add(self.score, (2,3), flag=wx.ALIGN_CENTER | wx.ALL, border=0)
-
 
         taille = (127*zoom,31*zoom)
         self.image_input_window_orig = wx.StaticBitmap(self, -1, size = taille, bitmap = wx.EmptyBitmap(*taille))
@@ -52,8 +55,9 @@ class MyFrame(wx.Frame):
         
         self.sizer_algo = wx.FlexGridSizer(cols = 1)
         self.sizer_algo.Add(self.image_input_window_orig, flag = wx.ALIGN_CENTER | wx.ALL, border= 5)
-        self.sizer_algo.Add(self.image_graph_window_orig, flag = wx.ALIGN_CENTER)
         self.sizer_algo.Add(self.main_sizer)
+        self.sizer_algo.Add(self.image_graph_window_orig, flag = wx.ALIGN_CENTER | wx.ALL, border = 10)
+        self.sizer_algo.Add(self.res, flag = wx.ALIGN_CENTER | wx.BOTTOM, border = 7 )
         
         
         
@@ -86,14 +90,18 @@ class MyFrame(wx.Frame):
         self.sizer_width.Add(self.text_width, flag = wx.ALIGN_CENTER | wx.RIGHT, border = 12)
         self.sizer_width.Add(self.width_picker, flag = wx.ALIGN_CENTER)
         
-        self.launchButton = wx.Button(self, -1, "Lancer le calcul")
+        self.launchButton = wx.Button(self, -1, "Lancer l'animation")
         self.launchButton.Bind(wx.EVT_BUTTON, self.OnLaunch)
+
+        self.launchPredictionButton = wx.Button(self, -1, "Lancer la prédiction")
+        self.launchPredictionButton.Bind(wx.EVT_BUTTON, self.OnLaunchPrediction)
         
         self.sizer_params = wx.FlexGridSizer(cols = 1)
         self.sizer_params.Add(self.sizer_model, flag = wx.ALIGN_CENTER | wx.BOTTOM | wx.UP, border = 3)
         self.sizer_params.Add(self.sizer_captcha, flag = wx.ALIGN_CENTER | wx.BOTTOM | wx.UP, border = 3)
         self.sizer_params.Add(self.sizer_width, flag = wx.ALIGN_CENTER | wx.BOTTOM | wx.UP, border = 3)
         self.sizer_params.Add(self.launchButton, flag = wx.ALIGN_CENTER | wx.UP, border = 40)
+        self.sizer_params.Add(self.launchPredictionButton, flag = wx.ALIGN_CENTER | wx.UP, border = 40)
         
         
         self.sizer = wx.FlexGridSizer(rows = 1)
@@ -154,15 +162,24 @@ class MyFrame(wx.Frame):
         self.score.SetLabel(str(evt.score))
  ###############################################################################
     def SetGraphImage(self, image):
-        imag1 = image.Copy()
+##        imag1 = image.Copy()
+##        #create the event
+##        evt = self.SomeNewSetGraphImageEvent(image=imag1.Rescale(self.zoom*127, self.zoom*31).ConvertToBitmap())
+##        #post the event
+##        wx.PostEvent(self, evt)
+
         #create the event
-        evt = self.SomeNewSetGraphImageEvent(image=imag1.Rescale(self.zoom*127, self.zoom*31).ConvertToBitmap())
+        imag1 = self.PIL_to_WX(image)
+        #imag1 = self.PIL_to_WX(self.captcha.convert("RGB"))
+        evt = self.SomeNewSetGraphImageEvent(image=imag1.ConvertToBitmap())
         #post the event
         wx.PostEvent(self, evt)
+        self.launchPredictionButton.SetLabel("Lancer le calcul")
+        
     def OnSetGraphImage(self, evt):
         self.image_graph_window_orig.SetBitmap(evt.image)
         #self.image_graph_window_orig.Update()
-        #self.Update()
+        self.Update()
         #self.Fit()
  ###############################################################################
     def setCaptchaImage(self, pil_image):
@@ -170,6 +187,8 @@ class MyFrame(wx.Frame):
         evt = self.SomeNewSetCaptchaImageEvent(image=self.PIL_to_WX(pil_image).ConvertToBitmap())
         #post the event
         wx.PostEvent(self, evt)
+        self.Fit()
+        self.Update()
     def OnsetCaptchaImage(self, evt):
         self.image_input_window_orig.SetBitmap(evt.image)
   ###############################################################################
@@ -194,7 +213,7 @@ class MyFrame(wx.Frame):
                 return
             if not self.model_selected:
                 wx.MessageBox("Selectionner le modele SVM !", "Donnee manquante")
-                #return
+                return
             
             self.actif = not self.actif
             self.launchButton.SetLabel("Arreter le calcul")
@@ -204,6 +223,24 @@ class MyFrame(wx.Frame):
             self.graph_image = wx.EmptyImage(127,31)
             self.actif = not self.actif
         
+    def OnLaunchPrediction(self, evt):
+        if not self.actif:
+            if not self.captcha_selected:
+                wx.MessageBox("Selectionner le Captcha !", "Donnee manquante")
+                return
+            if not self.model_selected:
+                wx.MessageBox("Selectionner le modele SVM !", "Donnee manquante")
+                #return
+            
+            self.actif = not self.actif
+            self.launchPredictionButton.SetLabel("Arreter le calcul")
+            thread.start_new_thread(Hotmail_5_ComputeScores.get_prediction, (self.model, self.captcha, self))
+        else:
+            self.launchPredictionButton.SetLabel("Relancer le calcul")
+            self.graph_image = wx.EmptyImage(127,31)
+            self.actif = not self.actif
+            
+            
         
         
     def OnSelectModel(self, evt):

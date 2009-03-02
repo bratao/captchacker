@@ -2,14 +2,32 @@
 import psyco
 from Isolated_Char_Generator import *
 
+
+#TRACEBACK
+import traceback
+import sys
+def Myexcepthook(type, value, tb):
+        lines=traceback.format_exception(type, value, tb)
+        f=open('log.txt', 'a')
+        f.write("\n".join(lines))
+        f.close()
+        print lines
+        raw_input()
+sys.excepthook=Myexcepthook
+
+
+
 DEFAULT_SIZE = (40, 40)
 
 GENERATE_TRAINING_SET = True
 GENERATE_VALIDATION_SET = False
 
-FONTS = [("Fonts/califb.ttf", (176,)),
-         ("Fonts/sylfaen.ttf", (176,)),
-         ("Fonts/georgia.ttf", (176,))]
+FONTS = [
+        ("Fonts/califb.ttf", (180,)),
+         ("Fonts/georgia.ttf", (180,)),
+         ("Fonts/sylfaen.ttf", (180,)),
+         #("Fonts/BKANT.TTF", (180,)),
+         ]
 
 
 if GENERATE_TRAINING_SET:
@@ -37,8 +55,10 @@ if GENERATE_TRAINING_SET:
     STEP = 1
     ALIGN_RANGEY = [0.5]
     ALIGN_RANGEX = [0.5]
+    DXDY = [(-9,0), (9,0)]
     Generate_Set(DESTINATION_FOLDER,CLEAN_DESTINATION_FOLDER,DISTORTION_W_MIN,DISTORTION_W_MAX,DISTORTION_H_MIN,
-                 DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE)
+                 DISTORTION_H_MAX,SCALE_MIN,SCALE_MAX,STEP, elem_to_gen, FONTS, ALIGN_RANGEX, ALIGN_RANGEY, DEFAULT_SIZE,
+                 [], DXDY)
 
 
 if GENERATE_VALIDATION_SET:

@@ -48,12 +48,13 @@ def preprocess_captcha_part(file, parent = None):
     
     
 
-def predict(model, im, liste_probas=None):
+def predict(model, im, liste_probas=None, verbose=1):
     data = list(im.getdata())
     prediction = model.predict(data)
     probability = model.predict_probability(data)  
     
-    print chr(65+int(prediction)), max(probability[1].values())
+    if verbose:
+        print chr(65+int(prediction)), max(probability[1].values())
     
     if liste_probas is not None:
         liste_probas.append(probability[1])
@@ -116,7 +117,7 @@ def break_captcha(model, captcha, size=38, parent = None, image=None, liste_scor
             
             parent.setResult(preprocessed_captcha_part, prediction, int(max_score*10000000)/10000000.)
             parent.SetRGB(starting_pos + WIDTH/2, 31 - int(max_score*h))
-            parent.SetGraphImage(image)
+            #parent.SetGraphImage(image)
             
             time.sleep(0.5)
         else:
