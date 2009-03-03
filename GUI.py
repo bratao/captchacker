@@ -20,7 +20,7 @@ class MyFrame(wx.Frame):
     def __init__(self, zoom):
         self.zoom = 2
         self.model = 1
-        wx.Frame.__init__(self, None, -1, "Captcha Breaker", size=(600, 420))
+        wx.Frame.__init__(self, None, -1, "CaptcHacker", size=(600, 420))
 
         taille = (WIDTH*zoom,31*zoom)
         self.image_input_window = wx.StaticBitmap(self, -1, size = taille, bitmap = wx.EmptyBitmap(*taille))
@@ -93,7 +93,7 @@ class MyFrame(wx.Frame):
         self.launchButton = wx.Button(self, -1, "Lancer l'animation")
         self.launchButton.Bind(wx.EVT_BUTTON, self.OnLaunch)
 
-        self.launchPredictionButton = wx.Button(self, -1, "Lancer la prédiction")
+        self.launchPredictionButton = wx.Button(self, -1, "Lancer la prediction")
         self.launchPredictionButton.Bind(wx.EVT_BUTTON, self.OnLaunchPrediction)
         
         self.sizer_params = wx.FlexGridSizer(cols = 1)
@@ -308,7 +308,6 @@ def Myexcepthook(type, value, tb):
 sys.excepthook=Myexcepthook
 
 
-#thread.start_new_thread(Break_Captcha_util.break_captcha, (app.MyFrame,))
 app.MainLoop()
 
 
