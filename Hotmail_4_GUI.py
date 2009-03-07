@@ -1,4 +1,5 @@
 #!coding: utf-8
+#!coding: utf-8
 
 MODEL_FOLDER = "Hotmail/Models"
 DEFAULT_MODEL_FILE="model.svm"

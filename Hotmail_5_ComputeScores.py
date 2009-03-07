@@ -156,7 +156,10 @@ def get_prediction(model, captcha, parent):
     for x in segs:
         for y in xrange(0, h):
             segmented_captcha.putpixel((x*parent.zoom, y), (255,0,0))
+
     parent.SetGraphImage(segmented_captcha)
+    parent.actif = False
+    parent.launchPredictionButton.SetLabel("Lancer la prédiction")
     
 
 
